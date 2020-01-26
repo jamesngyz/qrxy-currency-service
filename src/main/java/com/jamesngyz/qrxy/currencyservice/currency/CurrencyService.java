@@ -6,8 +6,7 @@ import org.springframework.stereotype.Service;
 public class CurrencyService {
 	
 	public Currency createCurrency(Currency currency) {
-		// TODO
-		return null;
+		return currency;
 	}
 	
 }
