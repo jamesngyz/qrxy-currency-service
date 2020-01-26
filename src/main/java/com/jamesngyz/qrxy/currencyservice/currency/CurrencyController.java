@@ -25,9 +25,11 @@ public class CurrencyController {
 		
 		Currency currency = currencyDtoMapper.requestToCurrency(request);
 		Currency createdCurrency = service.createCurrency(currency);
-		CurrencyResponse response = currencyDtoMapper.currencyToResponse(createdCurrency);
 		
-		return ResponseEntity.created(URI.create(createdCurrency.getId().toString())).body(response);
+		CurrencyResponse response = currencyDtoMapper.currencyToResponse(createdCurrency);
+		URI location = URI.create(createdCurrency.getId().toString());
+		
+		return ResponseEntity.created(location).body(response);
 	}
 	
 }
