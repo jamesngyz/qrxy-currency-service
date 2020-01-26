@@ -6,16 +6,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.javafaker.Faker;
 
@@ -25,6 +30,12 @@ public class CurrencyControllerTests {
 	private final MockMvc mockMvc;
 	private final Faker faker = new Faker();
 	private final CurrencyDtoMapper currencyDtoMapper = Mappers.getMapper(CurrencyDtoMapper.class);
+	
+	@Value("${spring.jackson.date-format}")
+	private String springJacksonDateFormat;
+	
+	@Value("${spring.jackson.time-zone}")
+	private String springJacksonTimeZone;
 	
 	@MockBean
 	private CurrencyService currencyService;
@@ -41,7 +52,13 @@ public class CurrencyControllerTests {
 		request.setCode(faker.lorem().characters(1, 5).toUpperCase());
 		request.setName(String.join(" ", faker.lorem().words(faker.number().numberBetween(1, 10))).toUpperCase());
 		
-		String requestJson = new JsonMapper().writeValueAsString(request);
+		DateFormat dateFormat = new SimpleDateFormat(springJacksonDateFormat);
+		TimeZone timeZone = TimeZone.getTimeZone(springJacksonTimeZone);
+		
+		ObjectMapper jsonMapper = new JsonMapper().setDateFormat(dateFormat);
+		jsonMapper.setTimeZone(timeZone);
+		
+		String requestJson = jsonMapper.writeValueAsString(request);
 		
 		Currency currency = currencyDtoMapper.requestToCurrency(request);
 		currency.setCreatedAt(faker.date().birthday());
@@ -55,7 +72,7 @@ public class CurrencyControllerTests {
 		when(currencyService.createCurrency(notNull())).thenReturn(currency);
 		
 		CurrencyResponse response = currencyDtoMapper.currencyToResponse(currency);
-		String responseJson = new JsonMapper().writeValueAsString(response);
+		String responseJson = jsonMapper.writeValueAsString(response);
 		
 		mockMvc.perform(
 				post("/v1/currencies")
