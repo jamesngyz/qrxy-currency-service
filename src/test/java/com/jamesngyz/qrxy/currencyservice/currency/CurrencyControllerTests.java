@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.javafaker.Faker;
@@ -47,31 +49,14 @@ public class CurrencyControllerTests {
 	@Test
 	public void createCurrency_AllOk_Status201Created() throws Exception {
 		
-		CurrencyRequest request = new CurrencyRequest();
-		request.setCode(faker.lorem().characters(1, 5).toUpperCase());
-		request.setName(String.join(" ", faker.lorem().words(faker.number().numberBetween(1, 10))).toUpperCase());
+		ObjectMapper jsonMapper = buildObjectMapper();
 		
-		DateFormat dateFormat = new SimpleDateFormat(springJacksonDateFormat);
-		TimeZone timeZone = TimeZone.getTimeZone(springJacksonTimeZone);
-		
-		ObjectMapper jsonMapper = new JsonMapper().setDateFormat(dateFormat);
-		jsonMapper.setTimeZone(timeZone);
-		
+		CurrencyRequest request = generateCreateCurrencyRequest();
 		String requestJson = jsonMapper.writeValueAsString(request);
-		
-		Currency currency = currencyDtoMapper.requestToCurrency(request);
-		currency.setCreatedAt(faker.date().birthday());
-		currency.setCreatedBy(faker.name().firstName());
-		currency.setId(UUID.randomUUID());
-		currency.setStatus(Currency.Status.ACTIVE);
-		currency.setUpdatedAt(currency.getCreatedAt());
-		currency.setUpdatedBy(currency.getCreatedBy());
-		currency.setVersion(0);
+		Currency currency = generateCreatedCurrency(request);
+		String responseJson = buildCreateCurrencyOkResponseJson(jsonMapper, currency);
 		
 		when(currencyService.createCurrency(notNull())).thenReturn(currency);
-		
-		CurrencyResponse response = currencyDtoMapper.currencyToResponse(currency);
-		String responseJson = jsonMapper.writeValueAsString(response);
 		
 		mockMvc.perform(
 				post("/v1/currencies")
@@ -81,6 +66,53 @@ public class CurrencyControllerTests {
 				.andExpect(header().string("location", currency.getId().toString()))
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(responseJson));
+	}
+	
+	private ObjectMapper buildObjectMapper() {
+		DateFormat dateFormat = new SimpleDateFormat(springJacksonDateFormat);
+		TimeZone timeZone = TimeZone.getTimeZone(springJacksonTimeZone);
+		
+		ObjectMapper objectMapper = new JsonMapper().setDateFormat(dateFormat);
+		objectMapper.setTimeZone(timeZone);
+		return objectMapper;
+	}
+	
+	private CurrencyRequest generateCreateCurrencyRequest() {
+		String code = generateCurrencyCode();
+		String name = generateCurrencyName();
+		
+		CurrencyRequest request = new CurrencyRequest();
+		request.setCode(code);
+		request.setName(name);
+		return request;
+	}
+	
+	private String generateCurrencyCode() {
+		return faker.lorem().characters(1, 5).toUpperCase();
+	}
+	
+	private String generateCurrencyName() {
+		int nameWordCount = faker.number().numberBetween(1, 10);
+		List<String> nameWords = faker.lorem().words(nameWordCount);
+		return String.join(" ", nameWords).toUpperCase();
+	}
+	
+	private Currency generateCreatedCurrency(CurrencyRequest request) {
+		Currency currency = currencyDtoMapper.requestToCurrency(request);
+		currency.setCreatedAt(faker.date().birthday());
+		currency.setCreatedBy(faker.name().firstName());
+		currency.setId(UUID.randomUUID());
+		currency.setStatus(Currency.Status.ACTIVE);
+		currency.setUpdatedAt(currency.getCreatedAt());
+		currency.setUpdatedBy(currency.getCreatedBy());
+		currency.setVersion(0);
+		return currency;
+	}
+	
+	private String buildCreateCurrencyOkResponseJson(ObjectMapper jsonMapper, Currency currency)
+			throws JsonProcessingException {
+		CurrencyResponse response = currencyDtoMapper.currencyToResponse(currency);
+		return jsonMapper.writeValueAsString(response);
 	}
 	
 }
