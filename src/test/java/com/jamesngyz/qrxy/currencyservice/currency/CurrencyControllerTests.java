@@ -3,8 +3,7 @@ package com.jamesngyz.qrxy.currencyservice.currency;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -79,6 +78,7 @@ public class CurrencyControllerTests {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(requestJson))
 				.andExpect(status().isCreated())
+				.andExpect(header().string("location", currency.getId().toString()))
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(responseJson));
 	}
