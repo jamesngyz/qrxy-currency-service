@@ -1,13 +1,18 @@
 package com.jamesngyz.qrxy.currencyservice.currency;
 
+import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,6 +25,9 @@ public class CurrencyControllerTests {
 	private final MockMvc mockMvc;
 	private final Faker faker = new Faker();
 	private final CurrencyDtoMapper currencyDtoMapper = Mappers.getMapper(CurrencyDtoMapper.class);
+	
+	@MockBean
+	private CurrencyService currencyService;
 	
 	@Autowired
 	public CurrencyControllerTests(MockMvc mockMvc) {
@@ -36,6 +44,16 @@ public class CurrencyControllerTests {
 		String requestJson = new JsonMapper().writeValueAsString(request);
 		
 		Currency currency = currencyDtoMapper.requestToCurrency(request);
+		currency.setCreatedAt(faker.date().birthday());
+		currency.setCreatedBy(faker.name().firstName());
+		currency.setId(UUID.randomUUID());
+		currency.setStatus(Currency.Status.ACTIVE);
+		currency.setUpdatedAt(currency.getCreatedAt());
+		currency.setUpdatedBy(currency.getCreatedBy());
+		currency.setVersion(0);
+		
+		when(currencyService.createCurrency(notNull())).thenReturn(currency);
+		
 		CurrencyResponse response = currencyDtoMapper.currencyToResponse(currency);
 		String responseJson = new JsonMapper().writeValueAsString(response);
 		
