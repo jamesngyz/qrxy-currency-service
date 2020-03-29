@@ -17,6 +17,7 @@ public class CurrencyService {
 	
 	public Currency createCurrency(Currency currency) {
 		currency.setId(UUID.randomUUID());
+		currency.setStatus(Currency.Status.ACTIVE);
 		return repository.save(currency);
 	}
 	
