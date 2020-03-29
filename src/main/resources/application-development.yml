@@ -3,3 +3,5 @@ spring:
     url: jdbc:postgresql://localhost:5432/qrxy_currency
     username: qrxy_currency
     password: qrxy_currency
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
