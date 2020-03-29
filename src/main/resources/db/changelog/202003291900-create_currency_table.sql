@@ -11,7 +11,7 @@ CREATE TABLE currency (
     created_by text NOT NULL,
     updated_at timestamptz NOT NULL DEFAULT now(),
     updated_by text NOT NULL,
-    version integer,
+    version integer NOT NULL,
 
     CONSTRAINT currency_code_uq  UNIQUE(code),
     CONSTRAINT currency_name_uq  UNIQUE(name)
