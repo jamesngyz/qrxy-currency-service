@@ -41,7 +41,7 @@ public class CurrencyServiceTests {
 	}
 	
 	private String generateCurrencyCode() {
-		return faker.lorem().characters(1, 5).toUpperCase();
+		return faker.lorem().characters(3).toUpperCase();
 	}
 	
 	private String generateCurrencyName() {
