@@ -2,6 +2,8 @@ package com.jamesngyz.qrxy.currencyservice.currency;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,7 @@ public class CurrencyController {
 	}
 	
 	@PostMapping(path = "/v1/currencies", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CurrencyResponse> createCurrency(@RequestBody CurrencyRequest request) {
+	public ResponseEntity<CurrencyResponse> createCurrency(@RequestBody @Valid CurrencyRequest request) {
 		
 		Currency currency = currencyDtoMapper.requestToCurrency(request);
 		Currency createdCurrency = service.createCurrency(currency);
