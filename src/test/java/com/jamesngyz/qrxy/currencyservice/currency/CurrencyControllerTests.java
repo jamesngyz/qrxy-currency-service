@@ -115,4 +115,54 @@ public class CurrencyControllerTests {
 		return jsonMapper.writeValueAsString(response);
 	}
 	
+	@Test
+	public void createCurrency_CodeLengthSmallerThan3_Status400() throws Exception {
+		ObjectMapper jsonMapper = buildObjectMapper();
+		
+		CurrencyRequest request = generateCurrencyRequestWithCodeShorterThan3();
+		String requestJson = jsonMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				post("/v1/currencies")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithCodeShorterThan3() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String code = generateStringShorterThan3();
+		request.setCode(code);
+		return request;
+	}
+	
+	private String generateStringShorterThan3() {
+		return faker.lorem().characters(0, 2).toUpperCase();
+	}
+	
+	@Test
+	public void createCurrency_CodeLengthGreaterThan3_Status400() throws Exception {
+		ObjectMapper jsonMapper = buildObjectMapper();
+		
+		CurrencyRequest request = generateCurrencyRequestWithCodeLongerThan3();
+		String requestJson = jsonMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				post("/v1/currencies")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithCodeLongerThan3() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String code = generateStringLongerThan3();
+		request.setCode(code);
+		return request;
+	}
+	
+	private String generateStringLongerThan3() {
+		return faker.lorem().characters(4, 20).toUpperCase();
+	}
+	
 }
