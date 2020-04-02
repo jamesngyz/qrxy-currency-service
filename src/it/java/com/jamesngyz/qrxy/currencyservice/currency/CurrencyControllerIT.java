@@ -1,5 +1,6 @@
 package com.jamesngyz.qrxy.currencyservice.currency;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -14,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,11 +27,12 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.javafaker.Faker;
 
 @ActiveProfiles("integration-test")
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class CurrencyControllerIT {
 	
 	private final MockMvc mockMvc;
+	private final TestRestTemplate restTemplate;
 	private final Faker faker = new Faker();
 	
 	@Value("${spring.jackson.date-format}")
@@ -37,8 +42,9 @@ public class CurrencyControllerIT {
 	private String springJacksonTimeZone;
 	
 	@Autowired
-	public CurrencyControllerIT(MockMvc mockMvc) {
+	public CurrencyControllerIT(MockMvc mockMvc, TestRestTemplate restTemplate) {
 		this.mockMvc = mockMvc;
+		this.restTemplate = restTemplate;
 	}
 	
 	@Test
@@ -84,6 +90,42 @@ public class CurrencyControllerIT {
 		int nameWordCount = faker.number().numberBetween(1, 10);
 		List<String> nameWords = faker.lorem().words(nameWordCount);
 		return String.join(" ", nameWords).toUpperCase();
+	}
+	
+	@Test
+	public void createCurrency_CodeLengthSmallerThan3_Status400() throws Exception {
+		CurrencyRequest request = generateCurrencyRequestWithCodeShorterThan3();
+		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithCodeShorterThan3() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String code = generateStringShorterThan3();
+		request.setCode(code);
+		return request;
+	}
+	
+	private String generateStringShorterThan3() {
+		return faker.lorem().characters(0, 2).toUpperCase();
+	}
+	
+	@Test
+	public void createCurrency_CodeLengthGreaterThan3_Status400() throws Exception {
+		CurrencyRequest request = generateCurrencyRequestWithCodeLongerThan3();
+		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithCodeLongerThan3() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String code = generateStringLongerThan3();
+		request.setCode(code);
+		return request;
+	}
+	
+	private String generateStringLongerThan3() {
+		return faker.lorem().characters(4, 20).toUpperCase();
 	}
 	
 }
