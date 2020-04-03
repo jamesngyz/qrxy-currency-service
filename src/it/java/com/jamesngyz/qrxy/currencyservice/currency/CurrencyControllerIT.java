@@ -93,10 +93,11 @@ public class CurrencyControllerIT {
 	}
 	
 	@Test
-	public void createCurrency_CodeLengthSmallerThan3_Status400() throws Exception {
+	public void createCurrency_CodeLengthSmallerThan3_Status400WithNullBody() throws Exception {
 		CurrencyRequest request = generateCurrencyRequestWithCodeShorterThan3();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(response.getBody()).isNull();
 	}
 	
 	private CurrencyRequest generateCurrencyRequestWithCodeShorterThan3() {
@@ -111,10 +112,11 @@ public class CurrencyControllerIT {
 	}
 	
 	@Test
-	public void createCurrency_CodeLengthGreaterThan3_Status400() throws Exception {
+	public void createCurrency_CodeLengthGreaterThan3_Status400WithNullBody() throws Exception {
 		CurrencyRequest request = generateCurrencyRequestWithCodeLongerThan3();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(response.getBody()).isNull();
 	}
 	
 	private CurrencyRequest generateCurrencyRequestWithCodeLongerThan3() {
