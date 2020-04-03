@@ -47,7 +47,7 @@ public class CurrencyControllerTests {
 	}
 	
 	@Test
-	public void createCurrency_AllOk_Status201Created() throws Exception {
+	void createCurrency_AllOk_Status201Created() throws Exception {
 		
 		ObjectMapper jsonMapper = buildObjectMapper();
 		
@@ -116,7 +116,7 @@ public class CurrencyControllerTests {
 	}
 	
 	@Test
-	public void createCurrency_CodeLengthSmallerThan3_Status400() throws Exception {
+	void createCurrency_CodeLengthSmallerThan3_Status400() throws Exception {
 		ObjectMapper jsonMapper = buildObjectMapper();
 		
 		CurrencyRequest request = generateCurrencyRequestWithCodeShorterThan3();
@@ -131,17 +131,13 @@ public class CurrencyControllerTests {
 	
 	private CurrencyRequest generateCurrencyRequestWithCodeShorterThan3() {
 		CurrencyRequest request = generateCreateCurrencyRequest();
-		String code = generateStringShorterThan3();
+		String code = faker.lorem().characters(0, 2).toUpperCase();
 		request.setCode(code);
 		return request;
 	}
 	
-	private String generateStringShorterThan3() {
-		return faker.lorem().characters(0, 2).toUpperCase();
-	}
-	
 	@Test
-	public void createCurrency_CodeLengthGreaterThan3_Status400() throws Exception {
+	void createCurrency_CodeLengthGreaterThan3_Status400() throws Exception {
 		ObjectMapper jsonMapper = buildObjectMapper();
 		
 		CurrencyRequest request = generateCurrencyRequestWithCodeLongerThan3();
@@ -156,13 +152,9 @@ public class CurrencyControllerTests {
 	
 	private CurrencyRequest generateCurrencyRequestWithCodeLongerThan3() {
 		CurrencyRequest request = generateCreateCurrencyRequest();
-		String code = generateStringLongerThan3();
+		String code = faker.lorem().characters(4, 20).toUpperCase();
 		request.setCode(code);
 		return request;
-	}
-	
-	private String generateStringLongerThan3() {
-		return faker.lorem().characters(4, 20).toUpperCase();
 	}
 	
 }

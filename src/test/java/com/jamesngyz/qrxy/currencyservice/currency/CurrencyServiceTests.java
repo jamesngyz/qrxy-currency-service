@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.github.javafaker.Faker;
 
 @ExtendWith(MockitoExtension.class)
-public class CurrencyServiceTests {
+class CurrencyServiceTests {
 	
 	private final Faker faker = new Faker();
 	
@@ -27,7 +27,7 @@ public class CurrencyServiceTests {
 	CurrencyRepository repository;
 	
 	@Test
-	public void createCurrency_AllOK_PersistToDatabaseAndReturn() {
+	void createCurrency_AllOK_PersistToDatabaseAndReturn() {
 		Currency currency = new Currency();
 		currency.setCode(generateCurrencyCode());
 		currency.setName(generateCurrencyName());
