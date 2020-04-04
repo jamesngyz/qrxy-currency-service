@@ -18,7 +18,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
 			HttpStatus status,
 			WebRequest request) {
 		
-		return new ResponseEntity<>(null, headers, status);
+		return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
 	}
 	
 }
