@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,7 @@ public class CurrencyControllerTests {
 	}
 	
 	private String generateCurrencyCode() {
-		return faker.lorem().characters(3).toUpperCase();
+		return RandomStringUtils.randomAlphabetic(3).toUpperCase();
 	}
 	
 	private String generateCurrencyName() {
@@ -131,7 +132,7 @@ public class CurrencyControllerTests {
 	
 	private CurrencyRequest generateCurrencyRequestWithCodeShorterThan3() {
 		CurrencyRequest request = generateCreateCurrencyRequest();
-		String code = faker.lorem().characters(0, 2).toUpperCase();
+		String code = RandomStringUtils.randomAlphabetic(0, 3).toUpperCase();
 		request.setCode(code);
 		return request;
 	}
@@ -152,7 +153,49 @@ public class CurrencyControllerTests {
 	
 	private CurrencyRequest generateCurrencyRequestWithCodeLongerThan3() {
 		CurrencyRequest request = generateCreateCurrencyRequest();
-		String code = faker.lorem().characters(4, 20).toUpperCase();
+		String code = RandomStringUtils.randomAlphabetic(4, 21).toUpperCase();
+		request.setCode(code);
+		return request;
+	}
+	
+	@Test
+	void createCurrency_CodeNonAlphabetic_Status400() throws Exception {
+		ObjectMapper jsonMapper = buildObjectMapper();
+		
+		CurrencyRequest request = generateCurrencyRequestWithCodeNonAlphabetic();
+		String requestJson = jsonMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				post("/v1/currencies")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithCodeNonAlphabetic() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String code = RandomStringUtils.randomNumeric(3);
+		request.setCode(code);
+		return request;
+	}
+	
+	@Test
+	void createCurrency_CodeNotUpperCase_Status400() throws Exception {
+		ObjectMapper jsonMapper = buildObjectMapper();
+		
+		CurrencyRequest request = generateCurrencyRequestWithCodeNotUpperCase();
+		String requestJson = jsonMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				post("/v1/currencies")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithCodeNotUpperCase() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String code = RandomStringUtils.randomAlphabetic(3).toLowerCase();
 		request.setCode(code);
 		return request;
 	}

@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -83,7 +84,7 @@ public class CurrencyControllerIT {
 	}
 	
 	private String generateCurrencyCode() {
-		return faker.lorem().characters(3).toUpperCase();
+		return RandomStringUtils.randomAlphabetic(3).toUpperCase();
 	}
 	
 	private String generateCurrencyName() {
@@ -102,13 +103,9 @@ public class CurrencyControllerIT {
 	
 	private CurrencyRequest generateCurrencyRequestWithCodeShorterThan3() {
 		CurrencyRequest request = generateCreateCurrencyRequest();
-		String code = generateStringShorterThan3();
+		String code = RandomStringUtils.randomAlphabetic(0, 3).toUpperCase();
 		request.setCode(code);
 		return request;
-	}
-	
-	private String generateStringShorterThan3() {
-		return faker.lorem().characters(0, 2).toUpperCase();
 	}
 	
 	@Test
@@ -121,13 +118,39 @@ public class CurrencyControllerIT {
 	
 	private CurrencyRequest generateCurrencyRequestWithCodeLongerThan3() {
 		CurrencyRequest request = generateCreateCurrencyRequest();
-		String code = generateStringLongerThan3();
+		String code = RandomStringUtils.randomAlphabetic(4, 21).toUpperCase();
 		request.setCode(code);
 		return request;
 	}
 	
-	private String generateStringLongerThan3() {
-		return faker.lorem().characters(4, 20).toUpperCase();
+	@Test
+	void createCurrency_CodeNonAlphabetic_Status400() {
+		CurrencyRequest request = generateCurrencyRequestWithCodeNonAlphabetic();
+		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(response.getBody()).isNull();
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithCodeNonAlphabetic() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String code = RandomStringUtils.randomNumeric(3);
+		request.setCode(code);
+		return request;
+	}
+	
+	@Test
+	void createCurrency_CodeNotUpperCase_Status400() {
+		CurrencyRequest request = generateCurrencyRequestWithCodeNotUpperCase();
+		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(response.getBody()).isNull();
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithCodeNotUpperCase() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String code = RandomStringUtils.randomAlphabetic(3).toLowerCase();
+		request.setCode(code);
+		return request;
 	}
 	
 }
