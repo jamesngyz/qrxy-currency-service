@@ -153,4 +153,18 @@ public class CurrencyControllerIT {
 		return request;
 	}
 	
+	@Test
+	void createCurrency_CodeNull_Status400() {
+		CurrencyRequest request = generateCurrencyRequestWithCodeNull();
+		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(response.getBody()).isNull();
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithCodeNull() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		request.setCode(null);
+		return request;
+	}
+	
 }

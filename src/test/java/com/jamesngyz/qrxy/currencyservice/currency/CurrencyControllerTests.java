@@ -200,4 +200,24 @@ public class CurrencyControllerTests {
 		return request;
 	}
 	
+	@Test
+	void createCurrency_CodeNull_Status400() throws Exception {
+		ObjectMapper jsonMapper = buildObjectMapper();
+		
+		CurrencyRequest request = generateCurrencyRequestWithCodeNull();
+		String requestJson = jsonMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				post("/v1/currencies")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithCodeNull() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		request.setCode(null);
+		return request;
+	}
+	
 }
