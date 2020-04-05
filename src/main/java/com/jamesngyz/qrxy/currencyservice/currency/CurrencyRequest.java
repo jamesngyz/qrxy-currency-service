@@ -1,5 +1,6 @@
 package com.jamesngyz.qrxy.currencyservice.currency;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -18,6 +19,8 @@ class CurrencyRequest {
 	private String code;
 	
 	@JsonProperty("name")
+	@NotBlank
+	@Size(min = 1, max = 80)
 	private String name;
 	
 }

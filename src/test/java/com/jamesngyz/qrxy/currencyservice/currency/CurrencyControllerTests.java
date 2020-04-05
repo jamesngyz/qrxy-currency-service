@@ -220,4 +220,88 @@ public class CurrencyControllerTests {
 		return request;
 	}
 	
+	@Test
+	void createCurrency_NameLengthSmallerThan1_Status400() throws Exception {
+		ObjectMapper jsonMapper = buildObjectMapper();
+		
+		CurrencyRequest request = generateCurrencyRequestWithNameShorterThan1();
+		String requestJson = jsonMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				post("/v1/currencies")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithNameShorterThan1() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String name = RandomStringUtils.randomAlphabetic(0, 1).toUpperCase();
+		request.setName(name);
+		return request;
+	}
+	
+	@Test
+	void createCurrency_NameLengthGreaterThan80_Status400() throws Exception {
+		ObjectMapper jsonMapper = buildObjectMapper();
+		
+		CurrencyRequest request = generateCurrencyRequestWithNameLongerThan80();
+		String requestJson = jsonMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				post("/v1/currencies")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithNameLongerThan80() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String name = RandomStringUtils.randomAlphabetic(81, 201).toUpperCase();
+		request.setName(name);
+		return request;
+	}
+	
+	@Test
+	void createCurrency_NameWhitespaceOnly_Status400() throws Exception {
+		ObjectMapper jsonMapper = buildObjectMapper();
+		
+		CurrencyRequest request = generateCurrencyRequestWithNameWhitespaceOnly();
+		String requestJson = jsonMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				post("/v1/currencies")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithNameWhitespaceOnly() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		int length = faker.number().numberBetween(1, 80);
+		String name = RandomStringUtils.random(length, " ");
+		request.setName(name);
+		return request;
+	}
+	
+	@Test
+	void createCurrency_NameNull_Status400() throws Exception {
+		ObjectMapper jsonMapper = buildObjectMapper();
+		
+		CurrencyRequest request = generateCurrencyRequestWithNameNull();
+		String requestJson = jsonMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				post("/v1/currencies")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithNameNull() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		request.setName(null);
+		return request;
+	}
+	
 }

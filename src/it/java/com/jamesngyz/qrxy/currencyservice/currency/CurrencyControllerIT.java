@@ -167,4 +167,64 @@ public class CurrencyControllerIT {
 		return request;
 	}
 	
+	@Test
+	void createCurrency_NameLengthSmallerThan1_Status400WithNullBody() {
+		CurrencyRequest request = generateCurrencyRequestWithNameShorterThan1();
+		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(response.getBody()).isNull();
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithNameShorterThan1() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String name = RandomStringUtils.randomAlphabetic(0, 1).toUpperCase();
+		request.setName(name);
+		return request;
+	}
+	
+	@Test
+	void createCurrency_NameLengthGreaterThan80_Status400WithNullBody() {
+		CurrencyRequest request = generateCurrencyRequestWithNameLongerThan80();
+		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(response.getBody()).isNull();
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithNameLongerThan80() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		String name = RandomStringUtils.randomAlphabetic(81, 201).toUpperCase();
+		request.setName(name);
+		return request;
+	}
+	
+	@Test
+	void createCurrency_NameWhitespaceOnly_Status400() {
+		CurrencyRequest request = generateCurrencyRequestWithNameWhitespaceOnly();
+		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(response.getBody()).isNull();
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithNameWhitespaceOnly() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		int length = faker.number().numberBetween(1, 80);
+		String name = RandomStringUtils.random(length, " ");
+		request.setName(name);
+		return request;
+	}
+	
+	@Test
+	void createCurrency_NameNull_Status400() {
+		CurrencyRequest request = generateCurrencyRequestWithNameNull();
+		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(response.getBody()).isNull();
+	}
+	
+	private CurrencyRequest generateCurrencyRequestWithNameNull() {
+		CurrencyRequest request = generateCreateCurrencyRequest();
+		request.setName(null);
+		return request;
+	}
+	
 }
