@@ -1,9 +1,6 @@
 package com.jamesngyz.qrxy.currencyservice.currency;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,8 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.javafaker.Faker;
@@ -31,7 +28,6 @@ import com.github.javafaker.Faker;
 @AutoConfigureMockMvc
 public class CurrencyControllerIT {
 	
-	private final MockMvc mockMvc;
 	private final TestRestTemplate restTemplate;
 	private final Faker faker = new Faker();
 	
@@ -42,25 +38,29 @@ public class CurrencyControllerIT {
 	private String springJacksonTimeZone;
 	
 	@Autowired
-	public CurrencyControllerIT(MockMvc mockMvc, TestRestTemplate restTemplate) {
-		this.mockMvc = mockMvc;
+	public CurrencyControllerIT(TestRestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
 	}
 	
 	@Test
-	void postCurrency_ValidRequestBody_Status201Created() throws Exception {
-		
-		ObjectMapper jsonMapper = buildObjectMapper();
+	void createCurrency_ValidRequestBody_Status201CreatedWithValidBody() throws JsonProcessingException {
 		
 		CurrencyRequest request = generateCreateCurrencyRequest();
-		String requestJson = jsonMapper.writeValueAsString(request);
+		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		
-		mockMvc.perform(
-				post("/v1/currencies")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(requestJson))
-				.andExpect(status().isCreated())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+		assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
+		
+		ObjectMapper mapper = buildObjectMapper();
+		CurrencyResponse currencyResponse = mapper.readValue(response.getBody(), CurrencyResponse.class);
+		
+		assertThat(response.getHeaders().getLocation()).hasPath(currencyResponse.getId().toString());
+		assertThat(currencyResponse.getCode()).isEqualTo(request.getCode());
+		assertThat(currencyResponse.getName()).isEqualTo(request.getName());
+		assertThat(currencyResponse.getId()).isNotNull();
+		assertThat(currencyResponse.getCreatedAt()).isNotNull();
+		assertThat(currencyResponse.getUpdatedAt()).isNotNull();
+		assertThat(currencyResponse.getStatus()).isEqualTo(Currency.Status.ACTIVE);
 	}
 	
 	private ObjectMapper buildObjectMapper() {
