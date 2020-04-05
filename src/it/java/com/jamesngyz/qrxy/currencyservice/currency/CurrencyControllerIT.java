@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -88,9 +87,10 @@ public class CurrencyControllerIT {
 	}
 	
 	private String generateCurrencyName() {
-		int nameWordCount = faker.number().numberBetween(1, 10);
-		List<String> nameWords = faker.lorem().words(nameWordCount);
-		return String.join(" ", nameWords).toUpperCase();
+		int wordCount = faker.number().numberBetween(1, 20);
+		int maxLength = faker.number().numberBetween(1, 80);
+		String sentence = faker.lorem().sentence(wordCount);
+		return sentence.substring(0, Math.min(maxLength - 1, sentence.length() - 1));
 	}
 	
 	@Test
