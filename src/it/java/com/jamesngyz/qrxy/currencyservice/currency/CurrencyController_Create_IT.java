@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,8 @@ import com.github.javafaker.Faker;
 public class CurrencyController_Create_IT {
 	
 	private final TestRestTemplate restTemplate;
+	private final CurrencyRepository repository;
+	
 	private final Faker faker = new Faker();
 	
 	@Value("${spring.jackson.date-format}")
@@ -38,8 +41,16 @@ public class CurrencyController_Create_IT {
 	private String springJacksonTimeZone;
 	
 	@Autowired
-	public CurrencyController_Create_IT(TestRestTemplate restTemplate) {
+	public CurrencyController_Create_IT(
+			TestRestTemplate restTemplate,
+			CurrencyRepository repository) {
 		this.restTemplate = restTemplate;
+		this.repository = repository;
+	}
+	
+	@BeforeEach
+	void deleteAllCurrencies() {
+		repository.deleteAll();
 	}
 	
 	@Test
