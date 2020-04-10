@@ -28,7 +28,7 @@ class CurrencyServiceTests {
 	CurrencyRepository repository;
 	
 	@Test
-	void createCurrency_AllOK_PersistToDatabaseAndReturn() {
+	void createCurrency_AllOk_PersistToDatabaseAndReturn() {
 		Currency currency = new Currency();
 		currency.setCode(generateCurrencyCode());
 		currency.setName(generateCurrencyName());
@@ -66,7 +66,7 @@ class CurrencyServiceTests {
 	}
 	
 	@Test
-	void getCurrencies_AllOK_RetrieveFromRepositoryAndReturn() {
+	void getCurrencies_AllOk_RetrieveFromRepositoryAndReturn() {
 		List<Currency> expectedCurrencies = generateExpectedCurrencies();
 		when(repository.findAll()).thenReturn(expectedCurrencies);
 		List<Currency> result = subject.getCurrencies();

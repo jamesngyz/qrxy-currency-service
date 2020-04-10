@@ -26,7 +26,7 @@ import com.github.javafaker.Faker;
 @ActiveProfiles("integration-test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class CurrencyControllerIT {
+public class CurrencyController_Create_IT {
 	
 	private final TestRestTemplate restTemplate;
 	private final Faker faker = new Faker();
@@ -38,7 +38,7 @@ public class CurrencyControllerIT {
 	private String springJacksonTimeZone;
 	
 	@Autowired
-	public CurrencyControllerIT(TestRestTemplate restTemplate) {
+	public CurrencyController_Create_IT(TestRestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
 	}
 	
