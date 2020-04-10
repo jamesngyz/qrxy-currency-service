@@ -1,5 +1,6 @@
 package com.jamesngyz.qrxy.currencyservice.currency;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,14 @@ public class CurrencyService {
 		this.repository = repository;
 	}
 	
-	public Currency createCurrency(Currency currency) {
+	Currency createCurrency(Currency currency) {
 		currency.setId(UUID.randomUUID());
 		currency.setStatus(Currency.Status.ACTIVE);
 		return repository.save(currency);
+	}
+	
+	List<Currency> getCurrencies() {
+		return repository.findAll();
 	}
 	
 }

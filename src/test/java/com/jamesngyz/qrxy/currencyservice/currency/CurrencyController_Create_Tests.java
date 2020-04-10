@@ -5,16 +5,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -22,39 +18,35 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.javafaker.Faker;
 
 @WebMvcTest
-public class CurrencyControllerTests {
+public class CurrencyController_Create_Tests {
 	
 	private final MockMvc mockMvc;
+	private final ObjectMapper objectMapper;
+	
 	private final Faker faker = new Faker();
 	private final CurrencyDtoMapper currencyDtoMapper = Mappers.getMapper(CurrencyDtoMapper.class);
-	
-	@Value("${spring.jackson.date-format}")
-	private String springJacksonDateFormat;
-	
-	@Value("${spring.jackson.time-zone}")
-	private String springJacksonTimeZone;
 	
 	@MockBean
 	private CurrencyService currencyService;
 	
 	@Autowired
-	public CurrencyControllerTests(MockMvc mockMvc) {
+	public CurrencyController_Create_Tests(
+			MockMvc mockMvc,
+			ObjectMapper objectMapper) {
 		this.mockMvc = mockMvc;
+		this.objectMapper = objectMapper;
 	}
 	
 	@Test
 	void createCurrency_AllOk_Status201Created() throws Exception {
 		
-		ObjectMapper jsonMapper = buildObjectMapper();
-		
 		CurrencyRequest request = generateCreateCurrencyRequest();
-		String requestJson = jsonMapper.writeValueAsString(request);
+		String requestJson = objectMapper.writeValueAsString(request);
 		Currency currency = generateCreatedCurrency(request);
-		String responseJson = buildCreateCurrencyOkResponseJson(jsonMapper, currency);
+		String responseJson = buildCreateCurrencyOkResponseJson(objectMapper, currency);
 		
 		when(currencyService.createCurrency(notNull())).thenReturn(currency);
 		
@@ -66,15 +58,6 @@ public class CurrencyControllerTests {
 				.andExpect(header().string("location", currency.getId().toString()))
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(content().json(responseJson));
-	}
-	
-	private ObjectMapper buildObjectMapper() {
-		DateFormat dateFormat = new SimpleDateFormat(springJacksonDateFormat);
-		TimeZone timeZone = TimeZone.getTimeZone(springJacksonTimeZone);
-		
-		ObjectMapper objectMapper = new JsonMapper().setDateFormat(dateFormat);
-		objectMapper.setTimeZone(timeZone);
-		return objectMapper;
 	}
 	
 	private CurrencyRequest generateCreateCurrencyRequest() {
@@ -110,18 +93,17 @@ public class CurrencyControllerTests {
 		return currency;
 	}
 	
-	private String buildCreateCurrencyOkResponseJson(ObjectMapper jsonMapper, Currency currency)
+	private String buildCreateCurrencyOkResponseJson(ObjectMapper objectMapper, Currency currency)
 			throws JsonProcessingException {
 		CurrencyResponse response = currencyDtoMapper.currencyToResponse(currency);
-		return jsonMapper.writeValueAsString(response);
+		return objectMapper.writeValueAsString(response);
 	}
 	
 	@Test
 	void createCurrency_CodeLengthSmallerThan3_Status400() throws Exception {
-		ObjectMapper jsonMapper = buildObjectMapper();
 		
 		CurrencyRequest request = generateCurrencyRequestWithCodeShorterThan3();
-		String requestJson = jsonMapper.writeValueAsString(request);
+		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
 				post("/v1/currencies")
@@ -139,10 +121,9 @@ public class CurrencyControllerTests {
 	
 	@Test
 	void createCurrency_CodeLengthGreaterThan3_Status400() throws Exception {
-		ObjectMapper jsonMapper = buildObjectMapper();
 		
 		CurrencyRequest request = generateCurrencyRequestWithCodeLongerThan3();
-		String requestJson = jsonMapper.writeValueAsString(request);
+		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
 				post("/v1/currencies")
@@ -160,10 +141,9 @@ public class CurrencyControllerTests {
 	
 	@Test
 	void createCurrency_CodeNonAlphabetic_Status400() throws Exception {
-		ObjectMapper jsonMapper = buildObjectMapper();
 		
 		CurrencyRequest request = generateCurrencyRequestWithCodeNonAlphabetic();
-		String requestJson = jsonMapper.writeValueAsString(request);
+		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
 				post("/v1/currencies")
@@ -181,10 +161,9 @@ public class CurrencyControllerTests {
 	
 	@Test
 	void createCurrency_CodeNotUpperCase_Status400() throws Exception {
-		ObjectMapper jsonMapper = buildObjectMapper();
 		
 		CurrencyRequest request = generateCurrencyRequestWithCodeNotUpperCase();
-		String requestJson = jsonMapper.writeValueAsString(request);
+		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
 				post("/v1/currencies")
@@ -202,10 +181,9 @@ public class CurrencyControllerTests {
 	
 	@Test
 	void createCurrency_CodeNull_Status400() throws Exception {
-		ObjectMapper jsonMapper = buildObjectMapper();
 		
 		CurrencyRequest request = generateCurrencyRequestWithCodeNull();
-		String requestJson = jsonMapper.writeValueAsString(request);
+		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
 				post("/v1/currencies")
@@ -222,10 +200,9 @@ public class CurrencyControllerTests {
 	
 	@Test
 	void createCurrency_NameLengthSmallerThan1_Status400() throws Exception {
-		ObjectMapper jsonMapper = buildObjectMapper();
 		
 		CurrencyRequest request = generateCurrencyRequestWithNameShorterThan1();
-		String requestJson = jsonMapper.writeValueAsString(request);
+		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
 				post("/v1/currencies")
@@ -243,10 +220,9 @@ public class CurrencyControllerTests {
 	
 	@Test
 	void createCurrency_NameLengthGreaterThan80_Status400() throws Exception {
-		ObjectMapper jsonMapper = buildObjectMapper();
 		
 		CurrencyRequest request = generateCurrencyRequestWithNameLongerThan80();
-		String requestJson = jsonMapper.writeValueAsString(request);
+		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
 				post("/v1/currencies")
@@ -264,10 +240,9 @@ public class CurrencyControllerTests {
 	
 	@Test
 	void createCurrency_NameWhitespaceOnly_Status400() throws Exception {
-		ObjectMapper jsonMapper = buildObjectMapper();
 		
 		CurrencyRequest request = generateCurrencyRequestWithNameWhitespaceOnly();
-		String requestJson = jsonMapper.writeValueAsString(request);
+		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
 				post("/v1/currencies")
@@ -286,10 +261,9 @@ public class CurrencyControllerTests {
 	
 	@Test
 	void createCurrency_NameNull_Status400() throws Exception {
-		ObjectMapper jsonMapper = buildObjectMapper();
 		
 		CurrencyRequest request = generateCurrencyRequestWithNameNull();
-		String requestJson = jsonMapper.writeValueAsString(request);
+		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
 				post("/v1/currencies")

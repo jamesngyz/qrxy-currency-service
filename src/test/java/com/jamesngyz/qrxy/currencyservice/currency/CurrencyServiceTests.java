@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,6 +63,42 @@ class CurrencyServiceTests {
 		expectedCurrency.setUpdatedBy(expectedCurrency.getCreatedBy());
 		expectedCurrency.setVersion(0);
 		return expectedCurrency;
+	}
+	
+	@Test
+	void getCurrencies_AllOK_RetrieveFromRepositoryAndReturn() {
+		List<Currency> expectedCurrencies = generateExpectedCurrencies();
+		when(repository.findAll()).thenReturn(expectedCurrencies);
+		List<Currency> result = subject.getCurrencies();
+		assertThat(result).isEqualTo(expectedCurrencies);
+	}
+	
+	private List<Currency> generateExpectedCurrencies() {
+		List<Currency> currencies = new ArrayList<>();
+		int currenciesCount = faker.number().numberBetween(1, 20);
+		
+		while (currenciesCount > 0) {
+			currencies.add(generateCurrency());
+			currenciesCount--;
+		}
+		return currencies;
+	}
+	
+	private Currency generateCurrency() {
+		String code = generateCurrencyCode();
+		String name = generateCurrencyName();
+		
+		Currency currency = new Currency();
+		currency.setCode(code);
+		currency.setName(name);
+		currency.setCreatedAt(faker.date().birthday());
+		currency.setCreatedBy(faker.name().firstName());
+		currency.setId(UUID.randomUUID());
+		currency.setStatus(Currency.Status.ACTIVE);
+		currency.setUpdatedAt(currency.getCreatedAt());
+		currency.setUpdatedBy(currency.getCreatedBy());
+		currency.setVersion(0);
+		return currency;
 	}
 	
 }
