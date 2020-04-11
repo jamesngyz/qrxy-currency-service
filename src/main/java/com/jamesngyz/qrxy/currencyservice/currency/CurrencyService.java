@@ -26,4 +26,11 @@ public class CurrencyService {
 		return repository.findAll();
 	}
 	
+	Currency updateCurrency(UUID id, UpdateCurrencyRequest request) {
+		Currency currency = repository.findById(id).get();
+		currency.setCode(request.getCode());
+		currency.setName(request.getName());
+		return repository.save(currency);
+	}
+	
 }

@@ -17,6 +17,11 @@ class FakeCurrency {
 		Currency currency = new Currency();
 		currency.setCode(code);
 		currency.setName(name);
+		currency = generatePersistenceFields(currency);
+		return currency;
+	}
+	
+	private static Currency generatePersistenceFields(Currency currency) {
 		currency.setCreatedAt(faker.date().birthday());
 		currency.setCreatedBy(faker.name().firstName());
 		currency.setId(UUID.randomUUID());
@@ -101,6 +106,18 @@ class FakeCurrency {
 		}
 	}
 	
+	static class UpdateRequest {
+		static UpdateCurrencyRequest build() {
+			String code = generateCurrencyCode();
+			String name = generateCurrencyName();
+			
+			UpdateCurrencyRequest request = new UpdateCurrencyRequest();
+			request.setCode(code);
+			request.setName(name);
+			return request;
+		}
+	}
+	
 	private static String generateCurrencyCode() {
 		return RandomStringUtils.randomAlphabetic(3).toUpperCase();
 	}
@@ -116,6 +133,19 @@ class FakeCurrency {
 		Currency currency = new Currency();
 		currency.setCode(request.getCode());
 		currency.setName(request.getName());
+		return currency;
+	}
+	
+	static Currency fromRequest(UpdateCurrencyRequest request) {
+		Currency currency = new Currency();
+		currency.setCode(request.getCode());
+		currency.setName(request.getName());
+		return currency;
+	}
+	
+	static Currency fromRequestAndGeneratePersistenceFields(UpdateCurrencyRequest request) {
+		Currency currency = fromRequest(request);
+		currency = generatePersistenceFields(currency);
 		return currency;
 	}
 	

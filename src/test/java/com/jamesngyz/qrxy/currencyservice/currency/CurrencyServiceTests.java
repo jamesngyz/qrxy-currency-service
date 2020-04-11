@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,6 +60,36 @@ class CurrencyServiceTests {
 			currenciesCount--;
 		}
 		return currencies;
+	}
+	
+	@Test
+	void updateCurrency_AllOk_FetchUpdatePersistAndReturn() {
+		Currency initial = FakeCurrency.build();
+		UUID id = initial.getId();
+		
+		UpdateCurrencyRequest request = FakeCurrency.UpdateRequest.build();
+		Currency expected = buildUpdatedCurrency(initial, request);
+		
+		when(repository.findById(id)).thenReturn(Optional.of(initial));
+		when(repository.save(expected)).thenReturn(expected);
+		
+		Currency result = subject.updateCurrency(id, request);
+		assertThat(result).isEqualTo(expected);
+	}
+	
+	private Currency buildUpdatedCurrency(Currency initial, UpdateCurrencyRequest request) {
+		Currency expected = new Currency();
+		expected.setId(initial.getId());
+		expected.setStatus(initial.getStatus());
+		expected.setCreatedAt(initial.getCreatedAt());
+		expected.setCreatedBy(initial.getCreatedBy());
+		expected.setUpdatedAt(initial.getUpdatedAt());
+		expected.setUpdatedBy(initial.getUpdatedBy());
+		expected.setVersion(initial.getVersion());
+		
+		expected.setName(request.getName());
+		expected.setCode(request.getCode());
+		return expected;
 	}
 	
 }
