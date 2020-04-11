@@ -56,17 +56,7 @@ public class CurrencyController_Read_Tests {
 	private String generateCurrencyResponsesJson(List<Currency> currencies) throws JsonProcessingException {
 		List<CurrencyResponse> responses = new ArrayList<>();
 		currencies.forEach(currency -> {
-			CurrencyResponse response = new CurrencyResponse();
-			response.setCode(currency.getCode());
-			response.setName(currency.getName());
-			response.setId(currency.getId());
-			response.setStatus(currency.getStatus());
-			response.setCreatedAt(currency.getCreatedAt());
-			response.setCreatedBy(currency.getCreatedBy());
-			response.setUpdatedBy(currency.getUpdatedBy());
-			response.setUpdatedAt(currency.getUpdatedAt());
-			response.setVersion(currency.getVersion());
-			
+			CurrencyResponse response = FakeCurrency.toResponse(currency);
 			responses.add(response);
 		});
 		return objectMapper.writeValueAsString(responses);

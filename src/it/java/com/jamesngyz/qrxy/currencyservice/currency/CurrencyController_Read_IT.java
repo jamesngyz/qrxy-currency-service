@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class CurrencyController_Read_IT {
 	
 	@Test
 	void readCurrencies_Status200WithBody() throws JsonProcessingException {
-		CurrencyRequest request = generateCreateCurrencyRequest();
+		CurrencyRequest request = FakeCurrency.Request.build();
 		restTemplate.postForEntity("/v1/currencies", request, String.class);
 		
 		ResponseEntity<String> response = restTemplate.getForEntity("/v1/currencies", String.class);
@@ -58,27 +57,6 @@ public class CurrencyController_Read_IT {
 				new TypeReference<List<CurrencyResponse>>() {
 				});
 		assertThat(currencyResponses).anyMatch(codeAndNameEqualTo(request));
-	}
-	
-	private CurrencyRequest generateCreateCurrencyRequest() {
-		String code = generateCurrencyCode();
-		String name = generateCurrencyName();
-		
-		CurrencyRequest request = new CurrencyRequest();
-		request.setCode(code);
-		request.setName(name);
-		return request;
-	}
-	
-	private String generateCurrencyCode() {
-		return RandomStringUtils.randomAlphabetic(3).toUpperCase();
-	}
-	
-	private String generateCurrencyName() {
-		int wordCount = faker.number().numberBetween(1, 20);
-		int maxLength = faker.number().numberBetween(1, 80);
-		String sentence = faker.lorem().sentence(wordCount);
-		return sentence.substring(0, Math.min(maxLength - 1, sentence.length() - 1));
 	}
 	
 	private Predicate<CurrencyResponse> codeAndNameEqualTo(CurrencyRequest request) {
