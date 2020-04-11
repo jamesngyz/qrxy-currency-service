@@ -7,9 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -67,38 +65,10 @@ public class CurrencyController_Read_Tests {
 		int currenciesCount = faker.number().numberBetween(1, 20);
 		
 		while (currenciesCount > 0) {
-			currencies.add(generateCurrency());
+			currencies.add(FakeCurrency.build());
 			currenciesCount--;
 		}
 		return currencies;
-	}
-	
-	private Currency generateCurrency() {
-		String code = generateCurrencyCode();
-		String name = generateCurrencyName();
-		
-		Currency currency = new Currency();
-		currency.setCode(code);
-		currency.setName(name);
-		currency.setCreatedAt(faker.date().birthday());
-		currency.setCreatedBy(faker.name().firstName());
-		currency.setId(UUID.randomUUID());
-		currency.setStatus(Currency.Status.ACTIVE);
-		currency.setUpdatedAt(currency.getCreatedAt());
-		currency.setUpdatedBy(currency.getCreatedBy());
-		currency.setVersion(0);
-		return currency;
-	}
-	
-	private String generateCurrencyCode() {
-		return RandomStringUtils.randomAlphabetic(3).toUpperCase();
-	}
-	
-	private String generateCurrencyName() {
-		int wordCount = faker.number().numberBetween(1, 20);
-		int maxLength = faker.number().numberBetween(1, 80);
-		String sentence = faker.lorem().sentence(wordCount);
-		return sentence.substring(0, Math.min(maxLength - 1, sentence.length() - 1));
 	}
 	
 }

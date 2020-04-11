@@ -1,5 +1,7 @@
 package com.jamesngyz.qrxy.currencyservice.currency;
 
+import java.util.UUID;
+
 import org.apache.commons.lang3.RandomStringUtils;
 
 import com.github.javafaker.Faker;
@@ -7,6 +9,23 @@ import com.github.javafaker.Faker;
 class FakeCurrency {
 	
 	private static final Faker faker = new Faker();
+	
+	static Currency build() {
+		String code = generateCurrencyCode();
+		String name = generateCurrencyName();
+		
+		Currency currency = new Currency();
+		currency.setCode(code);
+		currency.setName(name);
+		currency.setCreatedAt(faker.date().birthday());
+		currency.setCreatedBy(faker.name().firstName());
+		currency.setId(UUID.randomUUID());
+		currency.setStatus(Currency.Status.ACTIVE);
+		currency.setUpdatedAt(currency.getCreatedAt());
+		currency.setUpdatedBy(currency.getCreatedBy());
+		currency.setVersion(0);
+		return currency;
+	}
 	
 	static class Request {
 		static CurrencyRequest build() {
