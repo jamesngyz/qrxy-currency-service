@@ -5,13 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
-@Configuration
+@TestConfiguration
 public class TestConfig {
 	
 	@Value("${spring.jackson.date-format}")
