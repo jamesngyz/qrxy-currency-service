@@ -40,7 +40,7 @@ public class CurrencyController_Create_Tests {
 	@Test
 	void createCurrency_AllOk_Status201Created() throws Exception {
 		
-		CurrencyRequest request = FakeCurrency.Request.build();
+		CreateCurrencyRequest request = FakeCurrency.Request.build();
 		String requestJson = objectMapper.writeValueAsString(request);
 		Currency currency = generateCreatedCurrency(request);
 		String responseJson = buildCreateCurrencyOkResponseJson(currency);
@@ -57,7 +57,7 @@ public class CurrencyController_Create_Tests {
 				.andExpect(content().json(responseJson));
 	}
 	
-	private Currency generateCreatedCurrency(CurrencyRequest request) {
+	private Currency generateCreatedCurrency(CreateCurrencyRequest request) {
 		Currency currency = FakeCurrency.fromRequest(request);
 		currency.setCreatedAt(faker.date().birthday());
 		currency.setCreatedBy(faker.name().firstName());
@@ -77,7 +77,7 @@ public class CurrencyController_Create_Tests {
 	@Test
 	void createCurrency_CodeLengthSmallerThan3_Status400() throws Exception {
 		
-		CurrencyRequest request = FakeCurrency.Request.withCodeShorterThan3();
+		CreateCurrencyRequest request = FakeCurrency.Request.withCodeShorterThan3();
 		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
@@ -90,7 +90,7 @@ public class CurrencyController_Create_Tests {
 	@Test
 	void createCurrency_CodeLengthGreaterThan3_Status400() throws Exception {
 		
-		CurrencyRequest request = FakeCurrency.Request.withCodeLongerThan3();
+		CreateCurrencyRequest request = FakeCurrency.Request.withCodeLongerThan3();
 		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
@@ -103,7 +103,7 @@ public class CurrencyController_Create_Tests {
 	@Test
 	void createCurrency_CodeNonAlphabetic_Status400() throws Exception {
 		
-		CurrencyRequest request = FakeCurrency.Request.withCodeNonAlphabetic();
+		CreateCurrencyRequest request = FakeCurrency.Request.withCodeNonAlphabetic();
 		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
@@ -116,7 +116,7 @@ public class CurrencyController_Create_Tests {
 	@Test
 	void createCurrency_CodeNotUpperCase_Status400() throws Exception {
 		
-		CurrencyRequest request = FakeCurrency.Request.withCodeNotUpperCase();
+		CreateCurrencyRequest request = FakeCurrency.Request.withCodeNotUpperCase();
 		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
@@ -129,7 +129,7 @@ public class CurrencyController_Create_Tests {
 	@Test
 	void createCurrency_CodeNull_Status400() throws Exception {
 		
-		CurrencyRequest request = FakeCurrency.Request.withCodeNull();
+		CreateCurrencyRequest request = FakeCurrency.Request.withCodeNull();
 		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
@@ -142,7 +142,7 @@ public class CurrencyController_Create_Tests {
 	@Test
 	void createCurrency_NameLengthSmallerThan1_Status400() throws Exception {
 		
-		CurrencyRequest request = FakeCurrency.Request.withNameShorterThan1();
+		CreateCurrencyRequest request = FakeCurrency.Request.withNameShorterThan1();
 		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
@@ -155,7 +155,7 @@ public class CurrencyController_Create_Tests {
 	@Test
 	void createCurrency_NameLengthGreaterThan80_Status400() throws Exception {
 		
-		CurrencyRequest request = FakeCurrency.Request.withNameLongerThan80();
+		CreateCurrencyRequest request = FakeCurrency.Request.withNameLongerThan80();
 		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
@@ -168,7 +168,7 @@ public class CurrencyController_Create_Tests {
 	@Test
 	void createCurrency_NameWhitespaceOnly_Status400() throws Exception {
 		
-		CurrencyRequest request = FakeCurrency.Request.withNameWhitespaceOnly();
+		CreateCurrencyRequest request = FakeCurrency.Request.withNameWhitespaceOnly();
 		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(
@@ -181,7 +181,7 @@ public class CurrencyController_Create_Tests {
 	@Test
 	void createCurrency_NameNull_Status400() throws Exception {
 		
-		CurrencyRequest request = FakeCurrency.Request.withNameNull();
+		CreateCurrencyRequest request = FakeCurrency.Request.withNameNull();
 		String requestJson = objectMapper.writeValueAsString(request);
 		
 		mockMvc.perform(

@@ -33,74 +33,74 @@ class FakeCurrency {
 	}
 	
 	static class Request {
-		static CurrencyRequest build() {
+		static CreateCurrencyRequest build() {
 			String code = generateCurrencyCode();
 			String name = generateCurrencyName();
 			
-			CurrencyRequest request = new CurrencyRequest();
+			CreateCurrencyRequest request = new CreateCurrencyRequest();
 			request.setCode(code);
 			request.setName(name);
 			return request;
 		}
 		
-		static CurrencyRequest withCodeShorterThan3() {
-			CurrencyRequest request = FakeCurrency.Request.build();
+		static CreateCurrencyRequest withCodeShorterThan3() {
+			CreateCurrencyRequest request = FakeCurrency.Request.build();
 			String code = RandomStringUtils.randomAlphabetic(0, 3).toUpperCase();
 			request.setCode(code);
 			return request;
 		}
 		
-		static CurrencyRequest withCodeLongerThan3() {
-			CurrencyRequest request = FakeCurrency.Request.build();
+		static CreateCurrencyRequest withCodeLongerThan3() {
+			CreateCurrencyRequest request = FakeCurrency.Request.build();
 			String code = RandomStringUtils.randomAlphabetic(4, 21).toUpperCase();
 			request.setCode(code);
 			return request;
 		}
 		
-		static CurrencyRequest withCodeNonAlphabetic() {
-			CurrencyRequest request = FakeCurrency.Request.build();
+		static CreateCurrencyRequest withCodeNonAlphabetic() {
+			CreateCurrencyRequest request = FakeCurrency.Request.build();
 			String code = RandomStringUtils.randomNumeric(3);
 			request.setCode(code);
 			return request;
 		}
 		
-		static CurrencyRequest withCodeNotUpperCase() {
-			CurrencyRequest request = FakeCurrency.Request.build();
+		static CreateCurrencyRequest withCodeNotUpperCase() {
+			CreateCurrencyRequest request = FakeCurrency.Request.build();
 			String code = RandomStringUtils.randomAlphabetic(3).toLowerCase();
 			request.setCode(code);
 			return request;
 		}
 		
-		static CurrencyRequest withCodeNull() {
-			CurrencyRequest request = FakeCurrency.Request.build();
+		static CreateCurrencyRequest withCodeNull() {
+			CreateCurrencyRequest request = FakeCurrency.Request.build();
 			request.setCode(null);
 			return request;
 		}
 		
-		static CurrencyRequest withNameShorterThan1() {
-			CurrencyRequest request = FakeCurrency.Request.build();
+		static CreateCurrencyRequest withNameShorterThan1() {
+			CreateCurrencyRequest request = FakeCurrency.Request.build();
 			String name = RandomStringUtils.randomAlphabetic(0, 1).toUpperCase();
 			request.setName(name);
 			return request;
 		}
 		
-		static CurrencyRequest withNameLongerThan80() {
-			CurrencyRequest request = FakeCurrency.Request.build();
+		static CreateCurrencyRequest withNameLongerThan80() {
+			CreateCurrencyRequest request = FakeCurrency.Request.build();
 			String name = RandomStringUtils.randomAlphabetic(81, 201).toUpperCase();
 			request.setName(name);
 			return request;
 		}
 		
-		static CurrencyRequest withNameWhitespaceOnly() {
-			CurrencyRequest request = FakeCurrency.Request.build();
+		static CreateCurrencyRequest withNameWhitespaceOnly() {
+			CreateCurrencyRequest request = FakeCurrency.Request.build();
 			int length = faker.number().numberBetween(1, 80);
 			String name = RandomStringUtils.random(length, " ");
 			request.setName(name);
 			return request;
 		}
 		
-		static CurrencyRequest withNameNull() {
-			CurrencyRequest request = FakeCurrency.Request.build();
+		static CreateCurrencyRequest withNameNull() {
+			CreateCurrencyRequest request = FakeCurrency.Request.build();
 			request.setName(null);
 			return request;
 		}
@@ -129,7 +129,7 @@ class FakeCurrency {
 		return sentence.substring(0, Math.min(maxLength - 1, sentence.length() - 1));
 	}
 	
-	static Currency fromRequest(CurrencyRequest request) {
+	static Currency fromRequest(CreateCurrencyRequest request) {
 		Currency currency = new Currency();
 		currency.setCode(request.getCode());
 		currency.setName(request.getName());

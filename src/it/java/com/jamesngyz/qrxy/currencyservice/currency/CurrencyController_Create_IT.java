@@ -51,7 +51,7 @@ public class CurrencyController_Create_IT {
 	@Test
 	void createCurrency_ValidRequestBody_Status201CreatedWithValidBody() throws JsonProcessingException {
 		
-		CurrencyRequest request = FakeCurrency.Request.build();
+		CreateCurrencyRequest request = FakeCurrency.Request.build();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -70,7 +70,7 @@ public class CurrencyController_Create_IT {
 	
 	@Test
 	void createCurrency_CodeLengthSmallerThan3_Status400WithNullBody() {
-		CurrencyRequest request = FakeCurrency.Request.withCodeShorterThan3();
+		CreateCurrencyRequest request = FakeCurrency.Request.withCodeShorterThan3();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNull();
@@ -78,7 +78,7 @@ public class CurrencyController_Create_IT {
 	
 	@Test
 	void createCurrency_CodeLengthGreaterThan3_Status400WithNullBody() {
-		CurrencyRequest request = FakeCurrency.Request.withCodeLongerThan3();
+		CreateCurrencyRequest request = FakeCurrency.Request.withCodeLongerThan3();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNull();
@@ -86,7 +86,7 @@ public class CurrencyController_Create_IT {
 	
 	@Test
 	void createCurrency_CodeNonAlphabetic_Status400() {
-		CurrencyRequest request = FakeCurrency.Request.withCodeNonAlphabetic();
+		CreateCurrencyRequest request = FakeCurrency.Request.withCodeNonAlphabetic();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNull();
@@ -94,7 +94,7 @@ public class CurrencyController_Create_IT {
 	
 	@Test
 	void createCurrency_CodeNotUpperCase_Status400() {
-		CurrencyRequest request = FakeCurrency.Request.withCodeNotUpperCase();
+		CreateCurrencyRequest request = FakeCurrency.Request.withCodeNotUpperCase();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNull();
@@ -102,7 +102,7 @@ public class CurrencyController_Create_IT {
 	
 	@Test
 	void createCurrency_CodeNull_Status400() {
-		CurrencyRequest request = FakeCurrency.Request.withCodeNull();
+		CreateCurrencyRequest request = FakeCurrency.Request.withCodeNull();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNull();
@@ -110,7 +110,7 @@ public class CurrencyController_Create_IT {
 	
 	@Test
 	void createCurrency_NameLengthSmallerThan1_Status400WithNullBody() {
-		CurrencyRequest request = FakeCurrency.Request.withNameShorterThan1();
+		CreateCurrencyRequest request = FakeCurrency.Request.withNameShorterThan1();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNull();
@@ -118,7 +118,7 @@ public class CurrencyController_Create_IT {
 	
 	@Test
 	void createCurrency_NameLengthGreaterThan80_Status400WithNullBody() {
-		CurrencyRequest request = FakeCurrency.Request.withNameLongerThan80();
+		CreateCurrencyRequest request = FakeCurrency.Request.withNameLongerThan80();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNull();
@@ -126,7 +126,7 @@ public class CurrencyController_Create_IT {
 	
 	@Test
 	void createCurrency_NameWhitespaceOnly_Status400() {
-		CurrencyRequest request = FakeCurrency.Request.withNameWhitespaceOnly();
+		CreateCurrencyRequest request = FakeCurrency.Request.withNameWhitespaceOnly();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNull();
@@ -134,7 +134,7 @@ public class CurrencyController_Create_IT {
 	
 	@Test
 	void createCurrency_NameNull_Status400() {
-		CurrencyRequest request = FakeCurrency.Request.withNameNull();
+		CreateCurrencyRequest request = FakeCurrency.Request.withNameNull();
 		ResponseEntity<String> response = restTemplate.postForEntity("/v1/currencies", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 		assertThat(response.getBody()).isNull();

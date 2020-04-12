@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-class CurrencyRequest {
+class CreateCurrencyRequest {
 	
 	@JsonProperty("code")
 	@NotNull
