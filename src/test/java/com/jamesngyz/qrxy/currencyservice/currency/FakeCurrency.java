@@ -1,5 +1,6 @@
 package com.jamesngyz.qrxy.currencyservice.currency;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -49,22 +50,26 @@ class FakeCurrency {
 		return currency;
 	}
 	
-	private static Currency fromRequest(UpdateCurrencyRequest request) {
-		Currency currency = new Currency();
-		currency.setCode(request.getCode());
-		currency.setName(request.getName());
-		return currency;
-	}
-	
 	static Currency fromRequestAndGeneratePersistenceFields(CreateCurrencyRequest request) {
 		Currency currency = fromRequest(request);
 		generatePersistenceFields(currency);
 		return currency;
 	}
 	
-	static Currency fromRequestAndGeneratePersistenceFields(UpdateCurrencyRequest request) {
-		Currency currency = fromRequest(request);
-		generatePersistenceFields(currency);
+	static Currency fromInitialThenUpdate(Currency initial, UpdateCurrencyRequest request) {
+		Currency currency = new Currency();
+		currency.setCode(initial.getCode());
+		currency.setName(initial.getName());
+		currency.setId(initial.getId());
+		currency.setStatus(initial.getStatus());
+		currency.setCreatedAt(initial.getCreatedAt());
+		currency.setCreatedBy(initial.getCreatedBy());
+		currency.setUpdatedAt(initial.getUpdatedAt());
+		currency.setUpdatedBy(initial.getUpdatedBy());
+		currency.setVersion(initial.getVersion());
+		
+		Optional.ofNullable(request.getCode()).ifPresent(currency::setCode);
+		Optional.ofNullable(request.getName()).ifPresent(currency::setName);
 		return currency;
 	}
 	
@@ -149,6 +154,20 @@ class FakeCurrency {
 			
 			UpdateCurrencyRequest request = new UpdateCurrencyRequest();
 			request.setCode(code);
+			request.setName(name);
+			return request;
+		}
+		
+		static UpdateCurrencyRequest withCodeOnly() {
+			String code = generateCurrencyCode();
+			UpdateCurrencyRequest request = new UpdateCurrencyRequest();
+			request.setCode(code);
+			return request;
+		}
+		
+		static UpdateCurrencyRequest withNameOnly() {
+			String name = generateCurrencyName();
+			UpdateCurrencyRequest request = new UpdateCurrencyRequest();
 			request.setName(name);
 			return request;
 		}

@@ -1,10 +1,13 @@
 package com.jamesngyz.qrxy.currencyservice.currency;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CurrencyService {
@@ -27,9 +30,10 @@ public class CurrencyService {
 	}
 	
 	Currency updateCurrency(UUID id, UpdateCurrencyRequest request) {
-		Currency currency = repository.findById(id).get();
-		currency.setCode(request.getCode());
-		currency.setName(request.getName());
+		Currency currency = repository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		Optional.ofNullable(request.getCode()).ifPresent(currency::setCode);
+		Optional.ofNullable(request.getName()).ifPresent(currency::setName);
 		return repository.save(currency);
 	}
 	

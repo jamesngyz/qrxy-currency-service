@@ -40,14 +40,16 @@ public class CurrencyController_Update_IT {
 	@Test
 	void updateCurrency_AllOk_Status200WithUpdatedBody() {
 		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
-		ResponseEntity<CurrencyResponse> createResponse = restTemplate
+		ResponseEntity<CurrencyResponse> createResponseEntity = restTemplate
 				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class);
 		
-		Objects.requireNonNull(createResponse.getBody());
-		UUID id = createResponse.getBody().getId();
+		CurrencyResponse createResponse = createResponseEntity.getBody();
+		Objects.requireNonNull(createResponse);
+		UUID id = createResponse.getId();
 		
 		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.build();
 		HttpEntity<UpdateCurrencyRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
+		
 		ResponseEntity<CurrencyResponse> result = restTemplate
 				.exchange(
 						"/v1/currencies/" + id.toString(),
@@ -56,13 +58,86 @@ public class CurrencyController_Update_IT {
 						CurrencyResponse.class);
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(result.getBody()).isNotNull();
-		assertThat(result.getBody()).matches(idAndCodeAndNameEqualTo(id, updateRequest));
+		assertThat(result.getBody().getId()).isEqualTo(id);
+		assertThat(result.getBody()).matches(codeAndNameEqualTo(updateRequest));
+		assertThat(result.getBody()).matches(statusAndCreatedAtAndCreatedByEqualTo(createResponse));
 	}
 	
-	private Predicate<CurrencyResponse> idAndCodeAndNameEqualTo(UUID id, UpdateCurrencyRequest updateRequest) {
-		return response -> response.getId().equals(id)
-				&& response.getCode().equals(updateRequest.getCode())
+	private Predicate<CurrencyResponse> codeAndNameEqualTo(UpdateCurrencyRequest updateRequest) {
+		return response -> response.getCode().equals(updateRequest.getCode())
 				&& response.getName().equals(updateRequest.getName());
+	}
+	
+	private Predicate<CurrencyResponse> statusAndCreatedAtAndCreatedByEqualTo(CurrencyResponse createResponse) {
+		return response -> response.getStatus().equals(createResponse.getStatus())
+				&& response.getCreatedAt().equals(createResponse.getCreatedAt())
+				&& response.getCreatedBy().equals(createResponse.getCreatedBy());
+	}
+	
+	@Test
+	void updateCurrency_CodeOnly_Status200WithUpdatedBody() {
+		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
+		ResponseEntity<CurrencyResponse> createResponseEntity = restTemplate
+				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class);
+		
+		CurrencyResponse createResponse = createResponseEntity.getBody();
+		Objects.requireNonNull(createResponse);
+		UUID id = createResponse.getId();
+		
+		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withCodeOnly();
+		HttpEntity<UpdateCurrencyRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
+		
+		ResponseEntity<CurrencyResponse> result = restTemplate.exchange(
+				"/v1/currencies/" + id.toString(),
+				HttpMethod.PATCH,
+				updateRequestEntity,
+				CurrencyResponse.class);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(result.getBody()).isNotNull();
+		assertThat(result.getBody().getId()).isEqualTo(id);
+		assertThat(result.getBody().getCode()).isEqualTo(updateRequest.getCode());
+		assertThat(result.getBody().getName()).isEqualTo(createResponse.getName());
+		assertThat(result.getBody()).matches(statusAndCreatedAtAndCreatedByEqualTo(createResponse));
+	}
+	
+	@Test
+	void updateCurrency_NameOnly_Status200WithUpdatedBody() {
+		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
+		ResponseEntity<CurrencyResponse> createResponseEntity = restTemplate
+				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class);
+		
+		CurrencyResponse createResponse = createResponseEntity.getBody();
+		Objects.requireNonNull(createResponse);
+		UUID id = createResponse.getId();
+		
+		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withNameOnly();
+		HttpEntity<UpdateCurrencyRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
+		
+		ResponseEntity<CurrencyResponse> result = restTemplate.exchange(
+				"/v1/currencies/" + id.toString(),
+				HttpMethod.PATCH,
+				updateRequestEntity,
+				CurrencyResponse.class);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(result.getBody()).isNotNull();
+		assertThat(result.getBody().getId()).isEqualTo(id);
+		assertThat(result.getBody().getCode()).isEqualTo(createResponse.getCode());
+		assertThat(result.getBody().getName()).isEqualTo(updateRequest.getName());
+		assertThat(result.getBody()).matches(statusAndCreatedAtAndCreatedByEqualTo(createResponse));
+	}
+	
+	@Test
+	void updateCurrency_CurrencyNotFound_Status404() {
+		UUID id = UUID.randomUUID();
+		UpdateCurrencyRequest request = FakeCurrency.UpdateRequest.build();
+		HttpEntity<UpdateCurrencyRequest> requestEntity = new HttpEntity<>(request);
+		
+		ResponseEntity<?> result = restTemplate
+				.exchange("/v1/currencies/" + id.toString(),
+						HttpMethod.PATCH,
+						requestEntity,
+						Object.class);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 	
 }
