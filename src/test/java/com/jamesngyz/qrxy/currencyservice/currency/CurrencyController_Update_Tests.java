@@ -37,7 +37,7 @@ class CurrencyController_Update_Tests {
 		UpdateCurrencyRequest request = FakeCurrency.UpdateRequest.build();
 		String requestJson = objectMapper.writeValueAsString(request);
 		Currency currency = FakeCurrency.fromRequestAndGeneratePersistenceFields(request);
-		CurrencyResponse response = FakeCurrency.toResponse(currency);
+		CurrencyResponse response = FakeCurrency.Response.fromCurrency(currency);
 		String responseJson = objectMapper.writeValueAsString(response);
 		
 		when(currencyService.updateCurrency(currency.getId(), request)).thenReturn(currency);
