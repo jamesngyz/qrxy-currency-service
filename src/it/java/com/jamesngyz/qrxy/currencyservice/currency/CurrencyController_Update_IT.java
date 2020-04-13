@@ -61,6 +61,7 @@ public class CurrencyController_Update_IT {
 		assertThat(result.getBody().getId()).isEqualTo(id);
 		assertThat(result.getBody()).matches(codeAndNameEqualTo(updateRequest));
 		assertThat(result.getBody()).matches(statusAndCreatedAtAndCreatedByEqualTo(createResponse));
+		assertThat(result.getBody().getVersion()).isEqualTo(createResponse.getVersion() + 1);
 	}
 	
 	private Predicate<CurrencyResponse> codeAndNameEqualTo(UpdateCurrencyRequest updateRequest) {
@@ -98,6 +99,7 @@ public class CurrencyController_Update_IT {
 		assertThat(result.getBody().getCode()).isEqualTo(updateRequest.getCode());
 		assertThat(result.getBody().getName()).isEqualTo(createResponse.getName());
 		assertThat(result.getBody()).matches(statusAndCreatedAtAndCreatedByEqualTo(createResponse));
+		assertThat(result.getBody().getVersion()).isEqualTo(createResponse.getVersion() + 1);
 	}
 	
 	@Test
@@ -124,6 +126,7 @@ public class CurrencyController_Update_IT {
 		assertThat(result.getBody().getCode()).isEqualTo(createResponse.getCode());
 		assertThat(result.getBody().getName()).isEqualTo(updateRequest.getName());
 		assertThat(result.getBody()).matches(statusAndCreatedAtAndCreatedByEqualTo(createResponse));
+		assertThat(result.getBody().getVersion()).isEqualTo(createResponse.getVersion() + 1);
 	}
 	
 	@Test
