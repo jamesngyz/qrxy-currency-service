@@ -61,7 +61,7 @@ public class CurrencyController_Create_Tests {
 	}
 	
 	@Test
-	void createCurrency_CodeLengthSmallerThan3_Status400() throws Exception {
+	void createCurrency_CodeShorterThan3_Status400() throws Exception {
 		
 		CreateCurrencyRequest request = FakeCurrency.CreateRequest.withCodeShorterThan3();
 		String requestJson = objectMapper.writeValueAsString(request);
@@ -74,7 +74,7 @@ public class CurrencyController_Create_Tests {
 	}
 	
 	@Test
-	void createCurrency_CodeLengthGreaterThan3_Status400() throws Exception {
+	void createCurrency_CodeLongerThan3_Status400() throws Exception {
 		
 		CreateCurrencyRequest request = FakeCurrency.CreateRequest.withCodeLongerThan3();
 		String requestJson = objectMapper.writeValueAsString(request);
@@ -126,7 +126,7 @@ public class CurrencyController_Create_Tests {
 	}
 	
 	@Test
-	void createCurrency_NameLengthSmallerThan1_Status400() throws Exception {
+	void createCurrency_NameShorterThan1_Status400() throws Exception {
 		
 		CreateCurrencyRequest request = FakeCurrency.CreateRequest.withNameShorterThan1();
 		String requestJson = objectMapper.writeValueAsString(request);
@@ -139,7 +139,7 @@ public class CurrencyController_Create_Tests {
 	}
 	
 	@Test
-	void createCurrency_NameLengthGreaterThan80_Status400() throws Exception {
+	void createCurrency_NameLongerThan80_Status400() throws Exception {
 		
 		CreateCurrencyRequest request = FakeCurrency.CreateRequest.withNameLongerThan80();
 		String requestJson = objectMapper.writeValueAsString(request);

@@ -43,7 +43,7 @@ public class CurrencyController {
 	@PatchMapping(path = "/v1/currencies/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CurrencyResponse> updateCurrency(
 			@PathVariable(name = "id") UUID id,
-			@RequestBody UpdateCurrencyRequest request) {
+			@Valid @RequestBody UpdateCurrencyRequest request) {
 		Currency currency = service.updateCurrency(id, request);
 		CurrencyResponse response = currencyDtoMapper.currencyToResponse(currency);
 		return ResponseEntity.ok(response);

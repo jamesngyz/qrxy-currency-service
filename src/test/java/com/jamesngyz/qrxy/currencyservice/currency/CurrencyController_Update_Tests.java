@@ -113,4 +113,101 @@ class CurrencyController_Update_Tests {
 				.andExpect(status().isNotFound());
 	}
 	
+	@Test
+	void updateCurrency_CodeShorterThan3_Status400() throws Exception {
+		
+		UUID id = UUID.randomUUID();
+		UpdateCurrencyRequest request = FakeCurrency.UpdateRequest.withCodeShorterThan3();
+		String requestJson = objectMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				patch("/v1/currencies/" + id.toString())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	void updateCurrency_CodeLonger3_Status400() throws Exception {
+		
+		UUID id = UUID.randomUUID();
+		UpdateCurrencyRequest request = FakeCurrency.UpdateRequest.withCodeLongerThan3();
+		String requestJson = objectMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				patch("/v1/currencies/" + id.toString())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	void updateCurrency_CodeNonAlphabetic_Status400() throws Exception {
+		
+		UUID id = UUID.randomUUID();
+		UpdateCurrencyRequest request = FakeCurrency.UpdateRequest.withCodeNonAlphabetic();
+		String requestJson = objectMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				patch("/v1/currencies/" + id.toString())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	void updateCurrency_CodeNotUpperCase_Status400() throws Exception {
+		
+		UUID id = UUID.randomUUID();
+		UpdateCurrencyRequest request = FakeCurrency.UpdateRequest.withCodeNotUpperCase();
+		String requestJson = objectMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				patch("/v1/currencies/" + id.toString())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	void updateCurrency_NameShorterThan1_Status400() throws Exception {
+		
+		UUID id = UUID.randomUUID();
+		UpdateCurrencyRequest request = FakeCurrency.UpdateRequest.withNameShorterThan1();
+		String requestJson = objectMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				patch("/v1/currencies/" + id.toString())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	void updateCurrency_NameLongerThan80_Status400() throws Exception {
+		
+		UUID id = UUID.randomUUID();
+		UpdateCurrencyRequest request = FakeCurrency.UpdateRequest.withNameLongerThan80();
+		String requestJson = objectMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				patch("/v1/currencies/" + id.toString())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	void updateCurrency_NameWhitespaceOnly_Status400() throws Exception {
+		
+		UUID id = UUID.randomUUID();
+		UpdateCurrencyRequest request = FakeCurrency.UpdateRequest.withNameWhitespaceOnly();
+		String requestJson = objectMapper.writeValueAsString(request);
+		
+		mockMvc.perform(
+				patch("/v1/currencies/" + id.toString())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(requestJson))
+				.andExpect(status().isBadRequest());
+	}
 }

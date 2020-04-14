@@ -171,6 +171,56 @@ class FakeCurrency {
 			request.setName(name);
 			return request;
 		}
+		
+		static UpdateCurrencyRequest withCodeShorterThan3() {
+			UpdateCurrencyRequest request = UpdateRequest.build();
+			String code = RandomStringUtils.randomAlphabetic(0, 3).toUpperCase();
+			request.setCode(code);
+			return request;
+		}
+		
+		static UpdateCurrencyRequest withCodeLongerThan3() {
+			UpdateCurrencyRequest request = UpdateRequest.build();
+			String code = RandomStringUtils.randomAlphabetic(4, 21).toUpperCase();
+			request.setCode(code);
+			return request;
+		}
+		
+		static UpdateCurrencyRequest withCodeNonAlphabetic() {
+			UpdateCurrencyRequest request = UpdateRequest.build();
+			String code = RandomStringUtils.randomNumeric(3);
+			request.setCode(code);
+			return request;
+		}
+		
+		static UpdateCurrencyRequest withCodeNotUpperCase() {
+			UpdateCurrencyRequest request = UpdateRequest.build();
+			String code = RandomStringUtils.randomAlphabetic(3).toLowerCase();
+			request.setCode(code);
+			return request;
+		}
+		
+		static UpdateCurrencyRequest withNameShorterThan1() {
+			UpdateCurrencyRequest request = UpdateRequest.build();
+			String name = RandomStringUtils.randomAlphabetic(0, 1).toUpperCase();
+			request.setName(name);
+			return request;
+		}
+		
+		static UpdateCurrencyRequest withNameLongerThan80() {
+			UpdateCurrencyRequest request = UpdateRequest.build();
+			String name = RandomStringUtils.randomAlphabetic(81, 201).toUpperCase();
+			request.setName(name);
+			return request;
+		}
+		
+		static UpdateCurrencyRequest withNameWhitespaceOnly() {
+			UpdateCurrencyRequest request = UpdateRequest.build();
+			int length = faker.number().numberBetween(1, 80);
+			String name = RandomStringUtils.random(length, " ");
+			request.setName(name);
+			return request;
+		}
 	}
 	
 	static class Response {
