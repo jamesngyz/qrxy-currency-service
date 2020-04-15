@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 @Mapper
 public interface CurrencyDtoMapper {
 	
-	Currency requestToCurrency(CurrencyRequest request);
+	Currency requestToCurrency(CreateCurrencyRequest request);
 	
 	CurrencyResponse currencyToResponse(Currency currency);
 	

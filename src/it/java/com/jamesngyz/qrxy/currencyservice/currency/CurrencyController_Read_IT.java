@@ -46,12 +46,12 @@ public class CurrencyController_Read_IT {
 	
 	@Test
 	void readCurrencies_Status200WithBody() throws JsonProcessingException {
-		CurrencyRequest request = FakeCurrency.Request.build();
+		CreateCurrencyRequest request = FakeCurrency.CreateRequest.build();
 		restTemplate.postForEntity("/v1/currencies", request, String.class);
 		
 		ResponseEntity<String> response = restTemplate.getForEntity("/v1/currencies", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody()).isNotBlank();
+		assertThat(response.getBody()).isNotNull();
 		List<CurrencyResponse> currencyResponses = objectMapper.readValue(
 				response.getBody(),
 				new TypeReference<List<CurrencyResponse>>() {
@@ -59,7 +59,7 @@ public class CurrencyController_Read_IT {
 		assertThat(currencyResponses).anyMatch(codeAndNameEqualTo(request));
 	}
 	
-	private Predicate<CurrencyResponse> codeAndNameEqualTo(CurrencyRequest request) {
+	private Predicate<CurrencyResponse> codeAndNameEqualTo(CreateCurrencyRequest request) {
 		return response -> response.getCode().equals(request.getCode())
 				&& response.getName().equals(request.getName());
 	}

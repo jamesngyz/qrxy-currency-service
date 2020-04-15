@@ -2,16 +2,14 @@ package com.jamesngyz.qrxy.currencyservice.currency;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class CurrencyController {
@@ -25,7 +23,7 @@ public class CurrencyController {
 	}
 	
 	@PostMapping(path = "/v1/currencies", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<CurrencyResponse> createCurrency(@RequestBody @Valid CurrencyRequest request) {
+	public ResponseEntity<CurrencyResponse> createCurrency(@RequestBody @Valid CreateCurrencyRequest request) {
 		
 		Currency currency = currencyDtoMapper.requestToCurrency(request);
 		Currency createdCurrency = service.createCurrency(currency);
@@ -40,6 +38,15 @@ public class CurrencyController {
 		List<Currency> currencies = service.getCurrencies();
 		List<CurrencyResponse> currencyResponses = currencyDtoMapper.currenciesToResponses(currencies);
 		return ResponseEntity.ok(currencyResponses);
+	}
+	
+	@PatchMapping(path = "/v1/currencies/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<CurrencyResponse> updateCurrency(
+			@PathVariable(name = "id") UUID id,
+			@Valid @RequestBody UpdateCurrencyRequest request) {
+		Currency currency = service.updateCurrency(id, request);
+		CurrencyResponse response = currencyDtoMapper.currencyToResponse(currency);
+		return ResponseEntity.ok(response);
 	}
 	
 }
