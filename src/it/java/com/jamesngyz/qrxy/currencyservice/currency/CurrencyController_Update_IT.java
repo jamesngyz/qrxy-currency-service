@@ -39,12 +39,7 @@ public class CurrencyController_Update_IT {
 	
 	@Test
 	void updateCurrency_AllOk_Status200WithUpdatedBody() {
-		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
-		CurrencyResponse createResponse = restTemplate
-				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class)
-				.getBody();
-		
-		Objects.requireNonNull(createResponse);
+		CurrencyResponse createResponse = callPostCurrencyEndpoint();
 		UUID id = createResponse.getId();
 		
 		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.build();
@@ -77,12 +72,7 @@ public class CurrencyController_Update_IT {
 	
 	@Test
 	void updateCurrency_CodeOnly_Status200WithUpdatedBody() {
-		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
-		CurrencyResponse createResponse = restTemplate
-				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class)
-				.getBody();
-		
-		Objects.requireNonNull(createResponse);
+		CurrencyResponse createResponse = callPostCurrencyEndpoint();
 		UUID id = createResponse.getId();
 		
 		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withCodeOnly();
@@ -104,12 +94,7 @@ public class CurrencyController_Update_IT {
 	
 	@Test
 	void updateCurrency_NameOnly_Status200WithUpdatedBody() {
-		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
-		CurrencyResponse createResponse = restTemplate
-				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class)
-				.getBody();
-		
-		Objects.requireNonNull(createResponse);
+		CurrencyResponse createResponse = callPostCurrencyEndpoint();
 		UUID id = createResponse.getId();
 		
 		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withNameOnly();
@@ -133,162 +118,94 @@ public class CurrencyController_Update_IT {
 	void updateCurrency_CurrencyNotFound_Status404() {
 		UUID id = UUID.randomUUID();
 		UpdateCurrencyRequest request = FakeCurrency.UpdateRequest.build();
-		HttpEntity<UpdateCurrencyRequest> requestEntity = new HttpEntity<>(request);
 		
-		ResponseEntity<?> result = restTemplate
-				.exchange("/v1/currencies/" + id.toString(),
-						HttpMethod.PATCH,
-						requestEntity,
-						Object.class);
+		ResponseEntity<?> result = callPatchCurrencyEndpoint(id, request);
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 	
 	@Test
 	void updateCurrency_CodeShorterThan3_Status400() {
-		
-		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
-		CurrencyResponse createResponse = restTemplate
-				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class)
-				.getBody();
-		Objects.requireNonNull(createResponse);
-		UUID id = createResponse.getId();
-		
+		UUID id = createCurrencyAndGetId();
 		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withCodeShorterThan3();
-		HttpEntity<UpdateCurrencyRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
 		
-		ResponseEntity<?> result = restTemplate
-				.exchange(
-						"/v1/currencies/" + id.toString(),
-						HttpMethod.PATCH,
-						updateRequestEntity,
-						Object.class);
+		ResponseEntity<?> result = callPatchCurrencyEndpoint(id, updateRequest);
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
 	@Test
 	void updateCurrency_CodeLonger3_Status400() {
-		
-		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
-		CurrencyResponse createResponse = restTemplate
-				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class)
-				.getBody();
-		Objects.requireNonNull(createResponse);
-		UUID id = createResponse.getId();
-		
+		UUID id = createCurrencyAndGetId();
 		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withCodeLongerThan3();
-		HttpEntity<UpdateCurrencyRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
 		
-		ResponseEntity<?> result = restTemplate.exchange(
-				"/v1/currencies/" + id.toString(),
-				HttpMethod.PATCH,
-				updateRequestEntity,
-				Object.class);
+		ResponseEntity<?> result = callPatchCurrencyEndpoint(id, updateRequest);
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
 	@Test
 	void updateCurrency_CodeNonAlphabetic_Status400() {
-		
-		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
-		CurrencyResponse createResponse = restTemplate
-				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class)
-				.getBody();
-		Objects.requireNonNull(createResponse);
-		UUID id = createResponse.getId();
-		
+		UUID id = createCurrencyAndGetId();
 		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withCodeNonAlphabetic();
-		HttpEntity<UpdateCurrencyRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
 		
-		ResponseEntity<?> result = restTemplate.exchange(
-				"/v1/currencies/" + id.toString(),
-				HttpMethod.PATCH,
-				updateRequestEntity,
-				Object.class);
+		ResponseEntity<?> result = callPatchCurrencyEndpoint(id, updateRequest);
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
 	@Test
 	void updateCurrency_CodeNotUpperCase_Status400() {
-		
-		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
-		CurrencyResponse createResponse = restTemplate
-				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class)
-				.getBody();
-		Objects.requireNonNull(createResponse);
-		UUID id = createResponse.getId();
-		
+		UUID id = createCurrencyAndGetId();
 		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withCodeNotUpperCase();
-		HttpEntity<UpdateCurrencyRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
 		
-		ResponseEntity<?> result = restTemplate.exchange(
-				"/v1/currencies/" + id.toString(),
-				HttpMethod.PATCH,
-				updateRequestEntity,
-				Object.class);
+		ResponseEntity<?> result = callPatchCurrencyEndpoint(id, updateRequest);
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
 	@Test
 	void updateCurrency_NameShorterThan1_Status400() {
-		
-		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
-		CurrencyResponse createResponse = restTemplate
-				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class)
-				.getBody();
-		Objects.requireNonNull(createResponse);
-		UUID id = createResponse.getId();
-		
+		UUID id = createCurrencyAndGetId();
 		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withNameShorterThan1();
-		HttpEntity<UpdateCurrencyRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
 		
-		ResponseEntity<?> result = restTemplate.exchange(
-				"/v1/currencies/" + id.toString(),
-				HttpMethod.PATCH,
-				updateRequestEntity,
-				Object.class);
+		ResponseEntity<?> result = callPatchCurrencyEndpoint(id, updateRequest);
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
 	@Test
 	void updateCurrency_NameLongerThan80_Status400() {
-		
-		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
-		CurrencyResponse createResponse = restTemplate
-				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class)
-				.getBody();
-		Objects.requireNonNull(createResponse);
-		UUID id = createResponse.getId();
-		
+		UUID id = createCurrencyAndGetId();
 		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withNameLongerThan80();
-		HttpEntity<UpdateCurrencyRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
 		
-		ResponseEntity<?> result = restTemplate.exchange(
-				"/v1/currencies/" + id.toString(),
-				HttpMethod.PATCH,
-				updateRequestEntity,
-				Object.class);
+		ResponseEntity<?> result = callPatchCurrencyEndpoint(id, updateRequest);
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
 	@Test
 	void updateCurrency_NameWhitespaceOnly_Status400() {
+		UUID id = createCurrencyAndGetId();
+		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withNameWhitespaceOnly();
 		
+		ResponseEntity<?> result = callPatchCurrencyEndpoint(id, updateRequest);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
+	
+	private UUID createCurrencyAndGetId() {
+		CurrencyResponse createResponse = callPostCurrencyEndpoint();
+		return createResponse.getId();
+	}
+	
+	private CurrencyResponse callPostCurrencyEndpoint() {
 		CreateCurrencyRequest createRequest = FakeCurrency.CreateRequest.build();
 		CurrencyResponse createResponse = restTemplate
 				.postForEntity("/v1/currencies", createRequest, CurrencyResponse.class)
 				.getBody();
 		Objects.requireNonNull(createResponse);
-		UUID id = createResponse.getId();
-		
-		UpdateCurrencyRequest updateRequest = FakeCurrency.UpdateRequest.withNameWhitespaceOnly();
-		HttpEntity<UpdateCurrencyRequest> updateRequestEntity = new HttpEntity<>(updateRequest);
-		
-		ResponseEntity<?> result = restTemplate.exchange(
+		return createResponse;
+	}
+	
+	private ResponseEntity<?> callPatchCurrencyEndpoint(UUID id, UpdateCurrencyRequest updateRequest) {
+		return restTemplate.exchange(
 				"/v1/currencies/" + id.toString(),
 				HttpMethod.PATCH,
-				updateRequestEntity,
+				new HttpEntity<>(updateRequest),
 				Object.class);
-		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
 }
