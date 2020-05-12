@@ -57,6 +57,19 @@ class FakeCurrency {
 	}
 	
 	static Currency fromInitialThenUpdate(Currency initial, UpdateCurrencyRequest request) {
+		Currency currency = fromInitial(initial);
+		Optional.ofNullable(request.getCode()).ifPresent(currency::setCode);
+		Optional.ofNullable(request.getName()).ifPresent(currency::setName);
+		return currency;
+	}
+	
+	static Currency fromInitialThenUpdate(Currency initial, Currency.Status status) {
+		Currency currency = fromInitial(initial);
+		currency.setStatus(status);
+		return currency;
+	}
+	
+	private static Currency fromInitial(Currency initial) {
 		Currency currency = new Currency();
 		currency.setCode(initial.getCode());
 		currency.setName(initial.getName());
@@ -67,24 +80,6 @@ class FakeCurrency {
 		currency.setUpdatedAt(initial.getUpdatedAt());
 		currency.setUpdatedBy(initial.getUpdatedBy());
 		currency.setVersion(initial.getVersion());
-		
-		Optional.ofNullable(request.getCode()).ifPresent(currency::setCode);
-		Optional.ofNullable(request.getName()).ifPresent(currency::setName);
-		return currency;
-	}
-	
-	static Currency fromInitialThenUpdate(Currency initial, Currency.Status status) {
-		Currency currency = new Currency();
-		currency.setCode(initial.getCode());
-		currency.setName(initial.getName());
-		currency.setId(initial.getId());
-		currency.setCreatedAt(initial.getCreatedAt());
-		currency.setCreatedBy(initial.getCreatedBy());
-		currency.setUpdatedAt(initial.getUpdatedAt());
-		currency.setUpdatedBy(initial.getUpdatedBy());
-		currency.setVersion(initial.getVersion());
-		
-		currency.setStatus(status);
 		return currency;
 	}
 	
