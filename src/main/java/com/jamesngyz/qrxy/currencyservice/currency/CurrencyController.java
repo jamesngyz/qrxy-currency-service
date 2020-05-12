@@ -7,9 +7,11 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import org.mapstruct.factory.Mappers;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class CurrencyController {
@@ -47,6 +49,23 @@ public class CurrencyController {
 		Currency currency = service.updateCurrency(id, request);
 		CurrencyResponse response = currencyDtoMapper.currencyToResponse(currency);
 		return ResponseEntity.ok(response);
+	}
+	
+	@PutMapping(path = "/v1/currencies/{id}/status", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity updateCurrencyStatus(
+			@PathVariable(name = "id") UUID id,
+			@RequestBody String request) {
+		Currency.Status status = statusValueOf(request);
+		service.updateCurrency(id, status);
+		return ResponseEntity.noContent().build();
+	}
+	
+	private Currency.Status statusValueOf(@RequestBody String request) {
+		try {
+			return Currency.Status.valueOf(request);
+		} catch (IllegalArgumentException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 }

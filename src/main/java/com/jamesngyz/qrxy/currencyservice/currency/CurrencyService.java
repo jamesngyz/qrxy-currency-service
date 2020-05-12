@@ -37,4 +37,11 @@ public class CurrencyService {
 		return repository.save(currency);
 	}
 	
+	Currency updateCurrency(UUID id, Currency.Status status) {
+		Currency currency = repository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		currency.setStatus(status);
+		return repository.save(currency);
+	}
+	
 }
