@@ -73,6 +73,28 @@ class FakeCurrency {
 		return currency;
 	}
 	
+	static Currency fromInitialThenUpdate(Currency initial, Currency.Status status) {
+		Currency currency = new Currency();
+		currency.setCode(initial.getCode());
+		currency.setName(initial.getName());
+		currency.setId(initial.getId());
+		currency.setCreatedAt(initial.getCreatedAt());
+		currency.setCreatedBy(initial.getCreatedBy());
+		currency.setUpdatedAt(initial.getUpdatedAt());
+		currency.setUpdatedBy(initial.getUpdatedBy());
+		currency.setVersion(initial.getVersion());
+		
+		currency.setStatus(status);
+		return currency;
+	}
+	
+	static class Status {
+		static Currency.Status build() {
+			int randomStatusIndex = new Faker().number().numberBetween(0, Currency.Status.values().length);
+			return Currency.Status.values()[randomStatusIndex];
+		}
+	}
+	
 	static class CreateRequest {
 		static CreateCurrencyRequest build() {
 			String code = generateCurrencyCode();

@@ -119,4 +119,29 @@ class CurrencyServiceTests {
 		assertThrows(ResponseStatusException.class, () -> subject.updateCurrency(id, request));
 	}
 	
+	@Test
+	void updateCurrencyStatus_AllOk_UpdatePersistAndReturn() {
+		Currency initial = FakeCurrency.build();
+		UUID id = initial.getId();
+		
+		Currency.Status status = FakeCurrency.Status.build();
+		Currency expected = FakeCurrency.fromInitialThenUpdate(initial, status);
+		
+		when(repository.findById(id)).thenReturn(Optional.of(initial));
+		when(repository.save(expected)).thenReturn(expected);
+		
+		Currency result = subject.updateCurrency(id, status);
+		assertThat(result).isEqualTo(expected);
+	}
+	
+	@Test
+	void updateCurrencyStatus_CurrencyNotFound_ThrowResponseStatusException() {
+		UUID id = UUID.randomUUID();
+		Currency.Status status = FakeCurrency.Status.build();
+		
+		when(repository.findById(id)).thenReturn(Optional.empty());
+		
+		assertThrows(ResponseStatusException.class, () -> subject.updateCurrency(id, status));
+	}
+	
 }

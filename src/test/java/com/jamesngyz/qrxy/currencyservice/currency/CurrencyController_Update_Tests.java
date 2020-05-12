@@ -1,7 +1,9 @@
 package com.jamesngyz.qrxy.currencyservice.currency;
 
+import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -209,5 +211,48 @@ class CurrencyController_Update_Tests {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(requestJson))
 				.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	void updateCurrencyStatus_AllOk_Status200() throws Exception {
+		
+		Currency currency = FakeCurrency.build();
+		UUID id = currency.getId();
+		String currencyStatus = FakeCurrency.Status.build().name();
+		
+		mockMvc.perform(
+				put("/v1/currencies/" + id.toString() + "/status")
+						.contentType(MediaType.TEXT_PLAIN)
+						.content(currencyStatus))
+				.andExpect(status().isNoContent());
+	}
+	
+	@Test
+	void updateCurrencyStatus_StatusNonExistent_Status400() throws Exception {
+		
+		UUID id = UUID.randomUUID();
+		String nonExistentStatus = "abc";
+		
+		mockMvc.perform(
+				put("/v1/currencies/" + id.toString() + "/status")
+						.contentType(MediaType.TEXT_PLAIN)
+						.content(nonExistentStatus))
+				.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	void updateCurrencyStatus_CurrencyNotFound_Status404() throws Exception {
+		
+		UUID id = UUID.randomUUID();
+		String currencyStatus = FakeCurrency.Status.build().name();
+		
+		when(currencyService.updateCurrency(notNull(), (Currency.Status) notNull()))
+				.thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+		
+		mockMvc.perform(
+				put("/v1/currencies/" + id.toString() + "/status")
+						.contentType(MediaType.TEXT_PLAIN)
+						.content(currencyStatus))
+				.andExpect(status().isNotFound());
 	}
 }

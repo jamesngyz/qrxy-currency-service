@@ -186,6 +186,37 @@ public class CurrencyController_Update_IT {
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
+	@Test
+	void updateCurrencyStatus_AllOk_Status204() {
+		UUID id = createCurrencyAndGetId();
+		String status = FakeCurrency.Status.build().name();
+		
+		ResponseEntity<?> result = callPutCurrencyStatusEndpoint(id, status);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+		
+		assertThat(repository.findById(id).isPresent()).isTrue();
+		Currency updatedCurrency = repository.findById(id).get();
+		assertThat(updatedCurrency.getStatus()).isEqualTo(Currency.Status.valueOf(status));
+	}
+	
+	@Test
+	void updateCurrencyStatus_StatusNonExistent_Status400() {
+		UUID id = createCurrencyAndGetId();
+		String nonExistentStatus = "abc";
+		
+		ResponseEntity<?> result = callPutCurrencyStatusEndpoint(id, nonExistentStatus);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
+	
+	@Test
+	void updateCurrencyStatus_CurrencyNotFound_Status404() {
+		UUID id = UUID.randomUUID();
+		String status = FakeCurrency.Status.build().name();
+		
+		ResponseEntity<?> result = callPutCurrencyStatusEndpoint(id, status);
+		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+	}
+	
 	private UUID createCurrencyAndGetId() {
 		CurrencyResponse createResponse = callPostCurrencyEndpoint();
 		return createResponse.getId();
@@ -205,6 +236,14 @@ public class CurrencyController_Update_IT {
 				"/v1/currencies/" + id.toString(),
 				HttpMethod.PATCH,
 				new HttpEntity<>(updateRequest),
+				Object.class);
+	}
+	
+	private ResponseEntity<?> callPutCurrencyStatusEndpoint(UUID id, String status) {
+		return restTemplate.exchange(
+				"/v1/currencies/" + id.toString() + "/status",
+				HttpMethod.PUT,
+				new HttpEntity<>(status),
 				Object.class);
 	}
 	
