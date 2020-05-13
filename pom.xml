@@ -20,7 +20,8 @@
 		<com.github.javafaker.version>1.0.1</com.github.javafaker.version>
 		<com.h2database.version>1.4.200</com.h2database.version>
 
-		<org.apache.maven.plugins.version>3.5.1</org.apache.maven.plugins.version>
+		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+		<jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -102,7 +103,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${org.apache.maven.plugins.version}</version>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -123,7 +124,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.5</version>
+				<version>${jacoco-maven-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>prepare-agent</id>
